@@ -90,6 +90,7 @@ export default function Home() {
         <input
           type="text"
           placeholder="URL, videoId (https://www.youtube.com/watch?v=dQw4w9WgXcQ, https://youtu.be/dQw4w9WgXcQ, dQw4w9WgXcQ)"
+          autoFocus={true}
           ref={videoIdInput}
           disabled={loading}
         />
