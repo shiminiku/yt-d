@@ -10,7 +10,7 @@ function StreamsTable({ streams, decipher, loading, deciphered }) {
     <div className={style["scroll"]}>
       <table className={style["table-streaming"]}>
         <tbody>
-          {streams.map?.((s: any) => {
+          {streams?.map?.((s: any) => {
             let bitrateSuffix = "Kbps"
             let b = s.bitrate / 1000
             if (b / 1000 >= 1) {
@@ -163,6 +163,23 @@ export default function Home() {
                 <th>author</th>
                 <td>{response?.videoDetails.author ?? <span className={style["gray-text"]}>-----</span>}</td>
               </tr>
+              <tr>
+                <th>thumbnail</th>
+                <td>
+                  {response?.videoDetails.thumbnail?.thumbnails ? (
+                    <img
+                      className={style["thumbnail"]}
+                      src={
+                        response?.videoDetails.thumbnail.thumbnails[
+                          response?.videoDetails.thumbnail.thumbnails.length - 1
+                        ].url
+                      }
+                    />
+                  ) : (
+                    <span className={style["gray-text"]}>-----</span>
+                  )}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -170,20 +187,28 @@ export default function Home() {
           <>
             <div>
               <h2>Streamings</h2>
-              <h3>Both (video and audio)</h3>
-              <StreamsTable
-                streams={response.streamingData.formats}
-                decipher={sigToUrl}
-                loading={loading}
-                deciphered={deciphered}
-              />
-              <h3>Separated (Each video or audio)</h3>
-              <StreamsTable
-                streams={response.streamingData.adaptiveFormats}
-                decipher={sigToUrl}
-                loading={loading}
-                deciphered={deciphered}
-              />
+              {response.streamingData.formats && (
+                <>
+                  <h3>Both (video and audio)</h3>
+                  <StreamsTable
+                    streams={response.streamingData.formats}
+                    decipher={sigToUrl}
+                    loading={loading}
+                    deciphered={deciphered}
+                  />
+                </>
+              )}
+              {response.streamingData.adaptiveFormats && (
+                <>
+                  <h3>Separated (Each video or audio)</h3>
+                  <StreamsTable
+                    streams={response.streamingData.adaptiveFormats}
+                    decipher={sigToUrl}
+                    loading={loading}
+                    deciphered={deciphered}
+                  />
+                </>
+              )}
             </div>
           </>
         )}

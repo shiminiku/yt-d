@@ -67,6 +67,11 @@
   }
 }
 
+.thumbnail {
+  max-width: 100%;
+  max-height: 25vh;
+}
+
 .scroll {
   overflow: auto;
 }
