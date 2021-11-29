@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import https from "https"
 import got from "got"
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

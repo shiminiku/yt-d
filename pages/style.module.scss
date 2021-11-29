@@ -1,8 +1,6 @@
 .home {
   font-family: sans-serif;
-  h2 {
-    margin: 0.3em 0;
-  }
+  h2,
   h3 {
     margin: 0;
   }
@@ -14,9 +12,13 @@
 }
 
 .form {
+  max-width: 1000px;
   display: grid;
   grid-template-columns: 1fr 3em;
   gap: 0.1em;
+  * {
+    font-size: 1.3em;
+  }
 }
 
 @keyframes loading {
@@ -44,45 +46,35 @@
   }
 }
 
+@media (min-width: 1000px) {
+  .container {
+    display: grid;
+    grid-template-columns: 25vw 1fr;
+    gap: 0.5em;
+  }
+}
+
 .table-details {
-  & {
+  border-radius: 0.3em;
+  th {
     border: 1px solid black;
     border-radius: 0.2em;
-    margin: 0.3em 0;
-    border-spacing: 0;
-  }
-  th,
-  td {
-    border: 1px solid black;
-    padding: 0.3em 0.5em;
-    border-top-width: 0;
-    border-left-width: 0;
-  }
-  tr:last-child th,
-  tr:last-child td {
-    border-bottom-width: 0;
-  }
-  td:last-child {
-    border-right-width: 0;
   }
 }
 
 .thumbnail {
   max-width: 100%;
-  max-height: 25vh;
 }
 
 .scroll {
   overflow: auto;
 }
 .table-streaming {
-  & {
-    white-space: nowrap;
-    border: 1px solid black;
-    border-radius: 0.2em;
-    margin: 0.3em 0;
-    border-spacing: 0;
-  }
+  white-space: nowrap;
+  border: 1px solid black;
+  border-radius: 0.2em;
+  margin: 0.3em 0;
+  border-spacing: 0;
   td {
     border: 1px solid black;
     padding: 0.1em 0.3em;

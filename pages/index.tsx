@@ -39,7 +39,7 @@ function StreamsTable({ streams, decipher, loading, deciphered }) {
                 </td>
                 <td>
                   {s.height ? s.height + "p" : ""}
-                  {s.fps ? s.fps + "fps" : <span className={style["gray-text"]}>(audio)</span>}
+                  {s.fps ? s.fps + "fps" : <span className={style["gray-text"]}>(音声)</span>}
                 </td>
                 <td className={style["bitrate-text"]}>
                   {bitrate} {bitrateSuffix}
@@ -47,18 +47,18 @@ function StreamsTable({ streams, decipher, loading, deciphered }) {
                 {s.url ? (
                   <td>
                     <a target="_blank" href={s.url}>
-                      Go
+                      開く
                     </a>
                   </td>
                 ) : s.signatureCipher ? (
                   <td>
                     {deciphered[s.signatureCipher] ? (
                       <a target="_blank" href={deciphered[s.signatureCipher]}>
-                        Go
+                        開く
                       </a>
                     ) : (
                       <button onClick={() => decipher(s.signatureCipher)} disabled={loading}>
-                        Get URL
+                        リンクを取得
                       </button>
                     )}
                   </td>
@@ -120,10 +120,10 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>YT Downloader</title>
+      </Head>
       <div className={style["home"]}>
-        <Head>
-          <title>YT Downloader</title>
-        </Head>
         <form
           className={style["form"]}
           onSubmit={(ev) => {
@@ -133,7 +133,7 @@ export default function Home() {
         >
           <input
             type="text"
-            placeholder="URL, videoId (https://www.youtube.com/watch?v=dQw4w9WgXcQ, https://youtu.be/dQw4w9WgXcQ, dQw4w9WgXcQ)"
+            placeholder="リンクなど (https://www.youtube.com/watch?v=dQw4w9WgXcQ)"
             autoFocus={true}
             ref={videoIdInput}
             disabled={loading}
@@ -147,49 +147,62 @@ export default function Home() {
             <Image src={yt} />
           </div>
         )}
-        <div>
-          <h2>video details</h2>
-          <table className={style["table-details"]}>
-            <tbody>
-              <tr>
-                <th>videoId</th>
-                <td>{response?.videoDetails.videoId ?? <span className={style["gray-text"]}>-----</span>}</td>
-              </tr>
-              <tr>
-                <th>title</th>
-                <td>{response?.videoDetails.title ?? <span className={style["gray-text"]}>-----</span>}</td>
-              </tr>
-              <tr>
-                <th>author</th>
-                <td>{response?.videoDetails.author ?? <span className={style["gray-text"]}>-----</span>}</td>
-              </tr>
-              <tr>
-                <th>thumbnail</th>
-                <td>
-                  {response?.videoDetails.thumbnail?.thumbnails ? (
-                    <img
-                      className={style["thumbnail"]}
-                      src={
-                        response?.videoDetails.thumbnail.thumbnails[
-                          response?.videoDetails.thumbnail.thumbnails.length - 1
-                        ].url
-                      }
-                    />
-                  ) : (
-                    <span className={style["gray-text"]}>-----</span>
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        {response?.streamingData && (
-          <>
+        {!response && <p style={{ textAlign: "center" }}>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
+        <div className={style["container"]}>
+          {response?.videoDetails && (
+            <details open>
+              <summary>
+                <h2 style={{ display: "inline" }}>動画の情報</h2>
+              </summary>
+              <table className={style["table-details"]}>
+                <tbody>
+                  <tr>
+                    <th>videoId</th>
+                  </tr>
+                  <tr>
+                    <td>{response?.videoDetails.videoId ?? <span className={style["gray-text"]}>-----</span>}</td>
+                  </tr>
+                  <tr>
+                    <th>タイトル</th>
+                  </tr>
+                  <tr>
+                    <td>{response?.videoDetails.title ?? <span className={style["gray-text"]}>-----</span>}</td>
+                  </tr>
+                  <tr>
+                    <th>チャンネル</th>
+                  </tr>
+                  <tr>
+                    <td>{response?.videoDetails.author ?? <span className={style["gray-text"]}>-----</span>}</td>
+                  </tr>
+                  <tr>
+                    <th>サムネイル</th>
+                  </tr>
+                  <tr>
+                    <td>
+                      {response?.videoDetails.thumbnail?.thumbnails ? (
+                        <img
+                          className={style["thumbnail"]}
+                          src={
+                            response?.videoDetails.thumbnail.thumbnails[
+                              response?.videoDetails.thumbnail.thumbnails.length - 1
+                            ].url
+                          }
+                        />
+                      ) : (
+                        <span className={style["gray-text"]}>-----</span>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </details>
+          )}
+          {response?.streamingData && (
             <div>
-              <h2>Streamings</h2>
+              <h2>配信されているもの</h2>
               {response.streamingData.formats && (
                 <>
-                  <h3>Both (video and audio)</h3>
+                  <h3>両方 (動画と音声が一体化)</h3>
                   <StreamsTable
                     streams={response.streamingData.formats}
                     decipher={sigToUrl}
@@ -200,7 +213,7 @@ export default function Home() {
               )}
               {response.streamingData.adaptiveFormats && (
                 <>
-                  <h3>Separated (Each video or audio)</h3>
+                  <h3>分割 (動画と音声がそれぞれ分割)</h3>
                   <StreamsTable
                     streams={response.streamingData.adaptiveFormats}
                     decipher={sigToUrl}
@@ -210,8 +223,8 @@ export default function Home() {
                 </>
               )}
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </>
   )
