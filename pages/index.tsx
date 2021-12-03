@@ -169,7 +169,7 @@ export default function Home() {
                     <td>{response?.videoDetails.title ?? <span className={style["gray-text"]}>-----</span>}</td>
                   </tr>
                   <tr>
-                    <th>チャンネル</th>
+                    <th>投稿者</th>
                   </tr>
                   <tr>
                     <td>{response?.videoDetails.author ?? <span className={style["gray-text"]}>-----</span>}</td>
@@ -199,7 +199,7 @@ export default function Home() {
           )}
           {response?.streamingData && (
             <div>
-              <h2>配信されているもの</h2>
+              <h2>配信</h2>
               {response.streamingData.formats && (
                 <>
                   <h3>両方 (動画と音声が一体化)</h3>
@@ -213,7 +213,7 @@ export default function Home() {
               )}
               {response.streamingData.adaptiveFormats && (
                 <>
-                  <h3>分割 (動画と音声がそれぞれ分割)</h3>
+                  <h3>分割 (動画と音声がそれぞれで分割)</h3>
                   <StreamsTable
                     streams={response.streamingData.adaptiveFormats}
                     decipher={sigToUrl}
