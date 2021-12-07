@@ -1,80 +1,24 @@
 import Head from "next/head"
 import Image from "next/image"
-import { useRef, useState } from "react"
+import { createContext, useRef, useState } from "react"
+import { StreamsTable } from "../components/StreamsTable"
+import { VideoDetailsTable } from "../components/VideoDetailsTable"
 
 import style from "./style.module.scss"
 import yt from "./trouble-yt.svg"
 
-function StreamsTable({ streams, decipher, loading, deciphered }) {
-  return (
-    <div className={style["scroll"]}>
-      <table className={style["table-streaming"]}>
-        <tbody>
-          {streams?.map?.((s: any) => {
-            let bitrateSuffix = "Kbps"
-            let b = s.bitrate / 1000
-            if (b / 1000 >= 1) {
-              b = b / 1000
-              bitrateSuffix = "Mbps"
-            }
-            let bitrate = b.toFixed(3)
+export const LoadingContext = createContext(false)
 
-            return (
-              <tr key={s.itag}>
-                <td className={style["itag-col"]}>{s.itag}</td>
-                <td>
-                  <code>
-                    {s.mimeType.startsWith("video") ? (
-                      <>
-                        <span className={style["video-mimetype-text"]}>{s.mimeType.slice(0, 5)}</span>
-                        {s.mimeType.slice(5)}
-                      </>
-                    ) : (
-                      <>
-                        <span className={style["audio-mimetype-text"]}>{s.mimeType.slice(0, 5)}</span>
-                        {s.mimeType.slice(5)}
-                      </>
-                    )}
-                  </code>
-                </td>
-                <td>
-                  {s.height ? s.height + "p" : ""}
-                  {s.fps ? s.fps + "fps" : <span className={style["gray-text"]}>(音声)</span>}
-                </td>
-                <td className={style["bitrate-text"]}>
-                  {bitrate} {bitrateSuffix}
-                </td>
-                {s.url ? (
-                  <td>
-                    <a target="_blank" href={s.url}>
-                      開く
-                    </a>
-                  </td>
-                ) : s.signatureCipher ? (
-                  <td>
-                    {deciphered[s.signatureCipher] ? (
-                      <a target="_blank" href={deciphered[s.signatureCipher]}>
-                        開く
-                      </a>
-                    ) : (
-                      <button onClick={() => decipher(s.signatureCipher)} disabled={loading}>
-                        リンクを取得
-                      </button>
-                    )}
-                  </td>
-                ) : (
-                  <td></td>
-                )}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
-  )
+function fetchVideo(videoId: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    fetch(`/api/video?v=${videoId}`)
+      .then((v) => v.json())
+      .then((v) => resolve(v))
+      .catch((r) => reject(r))
+  })
 }
 
-export default function Home() {
+export default function Top() {
   const videoIdInput = useRef<HTMLInputElement>(null)
 
   const videoId = useRef("")
@@ -87,18 +31,15 @@ export default function Home() {
   function getVideo() {
     setLoading(true)
 
-    videoId.current = videoIdInput.current?.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
-    if (!videoId.current) {
-      setLoading(false)
-      return
-    }
+    videoId.current = videoIdInput.current.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
+    if (!videoId.current) return
 
-    fetch(`/api/video?v=${videoId.current}`)
-      .then((v) => v.json())
+    fetchVideo(videoId.current)
       .then((v) => {
         setLoading(false)
         setResponse(v)
       })
+      .catch(() => setLoading(false))
   }
 
   function sigToUrl(sc: string) {
@@ -147,82 +88,42 @@ export default function Home() {
             <Image src={yt} />
           </div>
         )}
-        {!response && <p style={{ textAlign: "center" }}>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
+        {!response && <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
         <div className={style["container"]}>
           {response?.videoDetails && (
             <details open>
               <summary>
                 <h2 style={{ display: "inline" }}>動画の情報</h2>
               </summary>
-              <table className={style["table-details"]}>
-                <tbody>
-                  <tr>
-                    <th>videoId</th>
-                  </tr>
-                  <tr>
-                    <td>{response?.videoDetails.videoId ?? <span className={style["gray-text"]}>-----</span>}</td>
-                  </tr>
-                  <tr>
-                    <th>タイトル</th>
-                  </tr>
-                  <tr>
-                    <td>{response?.videoDetails.title ?? <span className={style["gray-text"]}>-----</span>}</td>
-                  </tr>
-                  <tr>
-                    <th>投稿者</th>
-                  </tr>
-                  <tr>
-                    <td>{response?.videoDetails.author ?? <span className={style["gray-text"]}>-----</span>}</td>
-                  </tr>
-                  <tr>
-                    <th>サムネイル</th>
-                  </tr>
-                  <tr>
-                    <td>
-                      {response?.videoDetails.thumbnail?.thumbnails ? (
-                        <img
-                          className={style["thumbnail"]}
-                          src={
-                            response?.videoDetails.thumbnail.thumbnails[
-                              response?.videoDetails.thumbnail.thumbnails.length - 1
-                            ].url
-                          }
-                        />
-                      ) : (
-                        <span className={style["gray-text"]}>-----</span>
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <VideoDetailsTable videoDetails={response.videoDetails} />
             </details>
           )}
           {response?.streamingData && (
-            <div>
-              <h2>配信</h2>
-              {response.streamingData.formats && (
-                <>
-                  <h3>両方 (動画と音声が一体化)</h3>
-                  <StreamsTable
-                    streams={response.streamingData.formats}
-                    decipher={sigToUrl}
-                    loading={loading}
-                    deciphered={deciphered}
-                  />
-                </>
-              )}
-              {response.streamingData.adaptiveFormats && (
-                <>
-                  <h3>分割 (動画と音声がそれぞれで分割)</h3>
-                  <StreamsTable
-                    streams={response.streamingData.adaptiveFormats}
-                    decipher={sigToUrl}
-                    loading={loading}
-                    deciphered={deciphered}
-                  />
-                </>
-              )}
-            </div>
+            <LoadingContext.Provider value={loading}>
+              <div>
+                <h2>配信</h2>
+                {response.streamingData.formats && (
+                  <>
+                    <h3>両方 (動画と音声が一体化)</h3>
+                    <StreamsTable
+                      streams={response.streamingData.formats}
+                      decipherFunction={sigToUrl}
+                      deciphered={deciphered}
+                    />
+                  </>
+                )}
+                {response.streamingData.adaptiveFormats && (
+                  <>
+                    <h3>分割 (動画と音声がそれぞれで分割)</h3>
+                    <StreamsTable
+                      streams={response.streamingData.adaptiveFormats}
+                      decipherFunction={sigToUrl}
+                      deciphered={deciphered}
+                    />
+                  </>
+                )}
+              </div>
+            </LoadingContext.Provider>
           )}
         </div>
       </div>
