@@ -1,4 +1,4 @@
-import style from "../pages/style.module.scss"
+import style from "styles/style.module.scss"
 
 export function VideoDetailsTable({ videoDetails }) {
   return (

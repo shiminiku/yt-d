@@ -3,13 +3,17 @@ import Image from "next/image"
 import { createContext, useRef, useState } from "react"
 import { StreamsTable } from "../components/StreamsTable"
 import { VideoDetailsTable } from "../components/VideoDetailsTable"
+import { useOneVarState } from "components/useOneVarState"
 
-import style from "./style.module.scss"
-import yt from "./trouble-yt.svg"
+import style from "../styles/style.module.scss"
+import yt from "../public/trouble-yt.svg"
 
 export const LoadingContext = createContext(false)
+export const DecipheredURLContext = createContext<{ [key: string]: string }>({})
 
-function fetchVideo(videoId: string): Promise<any> {
+type PlayerRespose = any
+
+function fetchVideo(videoId: string): Promise<PlayerRespose> {
   return new Promise((resolve, reject) => {
     fetch(`/api/video?v=${videoId}`)
       .then((v) => v.json())
@@ -18,32 +22,32 @@ function fetchVideo(videoId: string): Promise<any> {
   })
 }
 
-export default function Top() {
+export default function Root() {
   const videoIdInput = useRef<HTMLInputElement>(null)
 
   const videoId = useRef("")
 
-  const [loading, setLoading] = useState(false)
+  const loading = useOneVarState<boolean>(false)
 
   const [response, setResponse] = useState<any>(null)
-  const [deciphered, setDeciphered] = useState({})
+  const [deciphered, setDeciphered] = useState<{ [key: string]: string }>({})
 
   function getVideo() {
-    setLoading(true)
+    loading.setState(true)
 
     videoId.current = videoIdInput.current.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
     if (!videoId.current) return
 
     fetchVideo(videoId.current)
       .then((v) => {
-        setLoading(false)
+        loading.setState(false)
         setResponse(v)
       })
-      .catch(() => setLoading(false))
+      .catch(() => loading.setState(false))
   }
 
-  function sigToUrl(sc: string) {
-    setLoading(true)
+  function scToUrl(sc: string) {
+    loading.setState(true)
 
     const data = {
       s: decodeURIComponent(sc.match(/s=([^&]*)/)?.[1] ?? ""),
@@ -54,7 +58,7 @@ export default function Top() {
     fetch(`/api/getsig?v=${videoId.current}&s=${data.s}`)
       .then((v) => v.text())
       .then((sig) => {
-        setLoading(false)
+        loading.setState(false)
         setDeciphered((ps) => ({ ...ps, [sc]: `${data.url}&${data.sp}=${sig}` }))
       })
   }
@@ -100,29 +104,23 @@ export default function Top() {
           )}
           {response?.streamingData && (
             <LoadingContext.Provider value={loading}>
-              <div>
-                <h2>配信</h2>
-                {response.streamingData.formats && (
-                  <>
-                    <h3>両方 (動画と音声が一体化)</h3>
-                    <StreamsTable
-                      streams={response.streamingData.formats}
-                      decipherFunction={sigToUrl}
-                      deciphered={deciphered}
-                    />
-                  </>
-                )}
-                {response.streamingData.adaptiveFormats && (
-                  <>
-                    <h3>分割 (動画と音声がそれぞれで分割)</h3>
-                    <StreamsTable
-                      streams={response.streamingData.adaptiveFormats}
-                      decipherFunction={sigToUrl}
-                      deciphered={deciphered}
-                    />
-                  </>
-                )}
-              </div>
+              <DecipheredURLContext.Provider value={deciphered}>
+                <div>
+                  <h2>配信</h2>
+                  {response.streamingData.formats && (
+                    <>
+                      <h3>両方 (動画と音声が一体化)</h3>
+                      <StreamsTable streams={response.streamingData.formats} decipherFunction={scToUrl} />
+                    </>
+                  )}
+                  {response.streamingData.adaptiveFormats && (
+                    <>
+                      <h3>分割 (動画と音声がそれぞれで分割)</h3>
+                      <StreamsTable streams={response.streamingData.adaptiveFormats} decipherFunction={scToUrl} />
+                    </>
+                  )}
+                </div>
+              </DecipheredURLContext.Provider>
             </LoadingContext.Provider>
           )}
         </div>

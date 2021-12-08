@@ -1,9 +1,10 @@
 import { useContext } from "react"
-import { LoadingContext } from "../pages"
-import style from "../pages/style.module.scss"
+import { DecipheredURLContext, LoadingContext } from "../pages"
+import style from "styles/style.module.scss"
 
-export function StreamsTable({ streams, decipherFunction, deciphered }) {
+export function StreamsTable({ streams, decipherFunction }) {
   const loading = useContext(LoadingContext)
+  const deciphered = useContext(DecipheredURLContext)
 
   return (
     <div className={style["scroll"]}>
