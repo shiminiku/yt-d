@@ -104,3 +104,24 @@
 .audio-mimetype-text {
   color: hsl(0, 60%, 40%);
 }
+
+@media (prefers-color-scheme: dark) {
+  .gray-text {
+    color: lightgray;
+  }
+  .table-details th {
+    border: 1px solid gray;
+  }
+  .table-streaming {
+    border: 1px solid gray;
+    td {
+      border: 1px solid gray;
+    }
+  }
+  .video-mimetype-text {
+    color: hsl(240, 100%, 80%);
+  }
+  .audio-mimetype-text {
+    color: hsl(0, 100%, 80%);
+  }
+}
