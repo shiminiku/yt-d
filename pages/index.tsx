@@ -70,6 +70,7 @@ export default function Root() {
         <meta name="description" content="とてもシンプルな、YouTubeのダウンローダー" />
         <meta property="og:title" content="YT Downloader" />
         <meta name="og:description" content="とてもシンプルな、YouTubeのダウンローダー" />
+        <meta property="og:image" content="https://yt-d.vercel.app/favicon.ico" />
       </Head>
       <div className={style["home"]}>
         <form
