@@ -67,6 +67,8 @@ export default function Root() {
     <>
       <Head>
         <title>YT Downloader</title>
+        <meta property="og:title" content="YT Downloader" />
+        <meta name="description" content="とてもシンプルな、YouTubeのダウンローダー" />
       </Head>
       <div className={style["home"]}>
         <form
