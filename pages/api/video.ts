@@ -1,11 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import got from "got"
+import logAPIAccess from "../../lib/apiLogger"
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { remoteAddress, remotePort, remoteFamily } = req.socket
-  console.log(`${remoteAddress} : ${remotePort}, ${remoteFamily}`)
-  console.log(req.rawHeaders)
-  console.log("----------")
+  logAPIAccess(req)
 
   const watch = await got(`https://www.youtube.com/watch?v=${req.query.v}`)
 
