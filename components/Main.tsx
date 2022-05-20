@@ -2,7 +2,7 @@ import Image from "next/image"
 import { createContext, useCallback, useRef, useState } from "react"
 import yt from "/public/trouble-yt.svg"
 import style from "/styles/Main.module.scss"
-import { VideoDetailsTable } from "./VideoDetailsTable"
+import { VideoDetails } from "./VideoDetailsTable"
 import { StreamsTable } from "./StreamsTable"
 
 export const StoreContext = createContext<{
@@ -65,7 +65,7 @@ export default function Main() {
     <>
       {loading && (
         <div className={style["loading"]}>
-          <Image src={yt} />
+          <Image src={yt} alt="loading" />
         </div>
       )}
 
@@ -90,7 +90,7 @@ export default function Main() {
 
       {!response && <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
       <div className={style["result-container"]}>
-        <VideoDetailsTable response={response} />
+        <VideoDetails response={response} />
         {response &&
           (response.streamingData ? (
             <StoreContext.Provider value={{ loading, deciphered }}>

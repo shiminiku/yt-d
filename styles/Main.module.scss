@@ -27,7 +27,7 @@
 
   display: grid;
   place-items: center;
-  > * {
+  & > * {
     object-fit: cover;
     animation: loading 0.5s ease-in infinite alternate;
   }

@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import style from "/styles/VideoDetailsTable.module.scss"
+import style from "/styles/VideoDetails.module.scss"
 
 function toDurationString(s: number) {
   const hours = Math.floor(s / 3600)
@@ -18,17 +18,19 @@ function toDurationString(s: number) {
   return str.join(":")
 }
 
-export function VideoDetailsTable({ response }) {
-  if (!response) return <div className={style["video-details"]}></div>
-  const { videoDetails } = response
-
+export function VideoDetails({ response }) {
   const res = useMemo(() => {
+    if (!response) return null
     const r = structuredClone(response)
     Object.keys(r).forEach((key) => {
       if (!["playabilityStatus", "streamingData", "captions", "videoDetails"].includes(key)) delete r[key]
     })
     return r
   }, [response])
+
+  if (!response) return <div className={style["video-details"]}></div>
+
+  const { videoDetails } = response
 
   return (
     <div className={style["video-details"]}>
@@ -58,9 +60,11 @@ export function VideoDetailsTable({ response }) {
         </table>
         <div className={style["thumbnail-container"]}>
           {videoDetails.thumbnail?.thumbnails && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               className={style["thumbnail"]}
               src={videoDetails.thumbnail.thumbnails[videoDetails.thumbnail.thumbnails.length - 1].url}
+              alt="video thumbnail"
             />
           )}
         </div>

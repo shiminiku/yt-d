@@ -45,14 +45,14 @@ export function StreamsTable({ streams, decipherFunction }) {
                 </td>
                 {stream.url ? (
                   <td>
-                    <a target="_blank" href={stream.url}>
+                    <a target="_blank" href={stream.url} rel="noreferrer">
                       開く
                     </a>
                   </td>
                 ) : stream.signatureCipher ? (
                   <td>
                     {deciphered[stream.signatureCipher] ? (
-                      <a target="_blank" href={deciphered[stream.signatureCipher]}>
+                      <a target="_blank" href={deciphered[stream.signatureCipher]} rel="noreferrer">
                         開く
                       </a>
                     ) : (
