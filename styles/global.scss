@@ -1,3 +1,12 @@
+:root {
+  font-family: sans-serif;
+}
+
+h2,
+h3 {
+  margin: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;

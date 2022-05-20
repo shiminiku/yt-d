@@ -1,0 +1,42 @@
+.form {
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3em;
+  gap: 0.1em;
+  * {
+    font-size: 1.3em;
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: translateY(-1em);
+  }
+  to {
+    transform: translateY(1em);
+  }
+}
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: hsla(0, 0%, 0%, 0.3);
+  backdrop-filter: blur(0.1em);
+
+  display: grid;
+  place-items: center;
+  > * {
+    object-fit: cover;
+    animation: loading 0.5s ease-in infinite alternate;
+  }
+}
+
+@media (min-width: 1400px) {
+  .result-container {
+    display: grid;
+    grid-template-columns: 600px 1fr;
+    gap: 0.5em;
+  }
+}

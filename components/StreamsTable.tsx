@@ -1,13 +1,12 @@
 import { useContext } from "react"
-import { DecipheredURLContext, LoadingContext } from "../pages"
-import style from "styles/style.module.scss"
+import style from "/styles/StreamsTable.module.scss"
+import { StoreContext } from "./Main"
 
 export function StreamsTable({ streams, decipherFunction }) {
-  const loading = useContext(LoadingContext)
-  const deciphered = useContext(DecipheredURLContext)
+  const { loading, deciphered } = useContext(StoreContext)
 
   return (
-    <div className={style["scroll"]}>
+    <div className={style["overflow-scroll"]}>
       <table className={style["table-streaming"]}>
         <tbody>
           {streams?.map?.((stream: any) => {
@@ -21,7 +20,7 @@ export function StreamsTable({ streams, decipherFunction }) {
 
             return (
               <tr key={stream.itag}>
-                <td className={style["itag-col"]}>{stream.itag}</td>
+                <td>{stream.itag}</td>
                 <td>
                   <code>
                     {stream.mimeType.startsWith("video") ? (
