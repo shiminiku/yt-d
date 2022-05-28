@@ -17,7 +17,12 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
     return
   }
 
-  let playerResponse = new Function("return " + match[1])()
-
-  res.json(playerResponse)
+  try {
+    res.json(new Function("return " + match[1])())
+  } catch (e) {
+    console.error(e)
+    console.error("match", match)
+    res.status(500)
+    res.send(`err ${match}`)
+  }
 }
