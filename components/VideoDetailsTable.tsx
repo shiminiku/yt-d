@@ -38,26 +38,24 @@ export function VideoDetails({ response }) {
         <summary>
           <h2 style={{ display: "inline" }}>動画の情報</h2>
         </summary>
-        <table className={style["table-details"]}>
-          <tbody>
-            <tr>
-              <th>動画ID</th>
-              <td>{videoDetails.videoId}</td>
-            </tr>
-            <tr>
-              <th>タイトル</th>
-              <td>{videoDetails.title}</td>
-            </tr>
-            <tr>
-              <th>投稿者</th>
-              <td>{videoDetails.author}</td>
-            </tr>
-            <tr>
-              <th>動画時間</th>
-              <td>{toDurationString(videoDetails.lengthSeconds)}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className={style["table"]}>
+          <div>
+            <span>動画ID</span>
+            <span>{videoDetails.videoId}</span>
+          </div>
+          <div>
+            <span>タイトル</span>
+            <span>{videoDetails.title}</span>
+          </div>
+          <div>
+            <span>投稿者</span>
+            <span>{videoDetails.author}</span>
+          </div>
+          <div>
+            <span>動画時間</span>
+            <span>{toDurationString(videoDetails.lengthSeconds)}</span>
+          </div>
+        </div>
         <div className={style["thumbnail-container"]}>
           {videoDetails.thumbnail?.thumbnails && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -70,7 +68,7 @@ export function VideoDetails({ response }) {
         </div>
         <details>
           <summary>
-            <h3 style={{ display: "inline" }}>more technical info</h3>
+            <h3 style={{ display: "inline" }}>内部情報</h3>
           </summary>
           <textarea readOnly value={JSON.stringify(res, null, 2)} wrap="off"></textarea>
         </details>

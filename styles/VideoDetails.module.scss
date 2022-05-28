@@ -1,12 +1,17 @@
 .video-details {
-  .table-details {
-    th {
-      display: inline-block;
-      padding-right: 0.3em;
-    }
-    td {
-      padding: 0 0.3em;
-      background-color: lightgray;
+  .table {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 600px);
+
+    > div {
+      display: contents;
+
+      :nth-child(1) {
+        padding-right: 0.3em;
+      }
+      :nth-child(2) {
+        background-color: lightgray;
+      }
     }
   }
 
@@ -22,7 +27,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .video-details .table-details td {
+  .video-details .table > div :nth-child(2) {
     background-color: dimgray;
   }
 }

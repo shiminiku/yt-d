@@ -18,6 +18,19 @@ export function StreamsTable({ streams, decipherFunction }) {
             }
             let bitrate = b.toFixed(3)
 
+            let lenSuffix = ""
+            let len = parseInt(stream.contentLength)
+            if (len / 1000 >= 1) {
+              len /= 1000
+              lenSuffix = "KB"
+
+              if (len / 1000 >= 1) {
+                len /= 1000
+                lenSuffix = "MB"
+              }
+            }
+            const length = len.toFixed(2)
+
             return (
               <tr key={stream.itag}>
                 <td>{stream.itag}</td>
@@ -42,6 +55,9 @@ export function StreamsTable({ streams, decipherFunction }) {
                 </td>
                 <td className={style["bitrate-text"]}>
                   {bitrate} {bitrateSuffix}
+                </td>
+                <td className={style["bitrate-text"]}>
+                  {length} {lenSuffix}
                 </td>
                 {stream.url ? (
                   <td>
