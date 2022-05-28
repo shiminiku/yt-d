@@ -1,7 +1,7 @@
 .video-details {
   .table {
     display: grid;
-    grid-template-columns: max-content minmax(0, 800px);
+    grid-template-columns: max-content minmax(0, 600px);
 
     > div {
       display: contents;

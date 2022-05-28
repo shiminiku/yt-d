@@ -36,7 +36,7 @@
 @media (min-width: 1300px) {
   .result-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto 1fr;
     gap: 0.5em;
   }
 }
