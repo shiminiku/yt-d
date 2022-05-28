@@ -5,5 +5,5 @@ export default function logAPIAccess(req: NextApiRequest) {
   const { localAddress, localPort } = req.socket
   console.log(`remote: ${remoteAddress} : ${remotePort}, ${remoteFamily}`)
   console.log(`local: ${localAddress} : ${localPort}`)
-  console.log("headers:", req.headers)
+  console.log("request headers:", req.headers)
 }
