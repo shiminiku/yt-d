@@ -10,7 +10,7 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
 
   console.log("watch.status:", watchPage.statusCode)
 
-  const match = watchPage.body.match(/ytInitialPlayerResponse\s*=\s*(\{.*?\});/)
+  const match = watchPage.body.match(/var\s+ytInitialPlayerResponse\s+=\s+(\{.*?\});?<\/script>/)
   if (!match?.[1]) {
     res.status(500)
     res.send(`not found match: ${match}`)
@@ -21,7 +21,7 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
     res.json(new Function("return " + match[1])())
   } catch (e) {
     console.error(e)
-    console.error("match", match)
+    console.error(watchPage.body)
     res.status(500)
     res.send(watchPage.body)
   }
