@@ -6,11 +6,11 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)
   res.setHeader("Access-Control-Allow-Origin", "*")
 
-  const watch = await got(`https://www.youtube.com/watch?v=${req.query.v}`)
+  const watchPage = await got(`https://www.youtube.com/watch?v=${req.query.v}`)
 
-  console.log("watch.status:", watch.statusCode)
+  console.log("watch.status:", watchPage.statusCode)
 
-  const match = watch.body.match(/ytInitialPlayerResponse\s*=\s*(\{.*?\});/)
+  const match = watchPage.body.match(/ytInitialPlayerResponse\s*=\s*(\{.*?\});/)
   if (!match?.[1]) {
     res.status(500)
     res.send(`not found match: ${match}`)
@@ -23,6 +23,6 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
     console.error(e)
     console.error("match", match)
     res.status(500)
-    res.send(`err ${match}`)
+    res.send(watchPage.body)
   }
 }
