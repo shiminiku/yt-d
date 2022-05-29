@@ -112,8 +112,7 @@ export default function Main() {
             </StoreContext.Provider>
           ) : (
             <div>
-              <p>配信情報が見つかりませんでした</p>
-              <p>これは「視聴できる地域を制限している」などが原因だと推測されます</p>
+              <h2>配信情報が見つかりませんでした</h2>
             </div>
           ))}
       </div>
