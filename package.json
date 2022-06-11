@@ -7,11 +7,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "got": "^12.0.4",
     "next": "^12.1.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "swr": "^1.3.0"
+    "youtube-otosuyatu": "https://github.com/owatu/youtube-otosuyatu.git"
   },
   "devDependencies": {
     "@types/react": "^18.0.9",
