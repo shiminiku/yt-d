@@ -68,8 +68,12 @@ export function VideoDetails({ response }) {
         </div>
         <details>
           <summary>
-            <h3 style={{ display: "inline" }}>内部情報</h3>
+            <h3 style={{ display: "inline" }}>技術的情報</h3>
           </summary>
+          <div>You can use devtools for more info</div>
+          <div>
+            endpoint: <code>{"GET /api/video?v={videoId}"}</code>
+          </div>
           <textarea readOnly value={JSON.stringify(res, null, 2)} wrap="off"></textarea>
         </details>
       </details>
