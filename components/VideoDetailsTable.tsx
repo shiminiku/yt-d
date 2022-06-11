@@ -38,24 +38,26 @@ export function VideoDetails({ response }) {
         <summary>
           <h2 style={{ display: "inline" }}>動画の情報</h2>
         </summary>
-        <div className={style["table"]}>
-          <div>
-            <span>動画ID</span>
-            <span>{videoDetails.videoId}</span>
-          </div>
-          <div>
-            <span>タイトル</span>
-            <span>{videoDetails.title}</span>
-          </div>
-          <div>
-            <span>投稿者</span>
-            <span>{videoDetails.author}</span>
-          </div>
-          <div>
-            <span>動画時間</span>
-            <span>{toDurationString(videoDetails.lengthSeconds)}</span>
-          </div>
-        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td>動画ID</td>
+              <td>{videoDetails.videoId}</td>
+            </tr>
+            <tr>
+              <td>タイトル</td>
+              <td>{videoDetails.title}</td>
+            </tr>
+            <tr>
+              <td>投稿者</td>
+              <td>{videoDetails.author}</td>
+            </tr>
+            <tr>
+              <td>動画時間</td>
+              <td>{toDurationString(videoDetails.lengthSeconds)}</td>
+            </tr>
+          </tbody>
+        </table>
         <div className={style["thumbnail-container"]}>
           {videoDetails.thumbnail?.thumbnails && (
             // eslint-disable-next-line @next/next/no-img-element

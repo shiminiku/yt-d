@@ -1,17 +1,12 @@
 .video-details {
-  .table {
-    display: grid;
-    grid-template-columns: max-content minmax(0, 600px);
-
-    > div {
-      display: contents;
-
-      :nth-child(1) {
-        padding-right: 0.3em;
-      }
-      :nth-child(2) {
-        background-color: lightgray;
-      }
+  tr > td {
+    &:nth-child(1) {
+      display: inline-block;
+      margin-right: 0.2em;
+    }
+    &:nth-child(2) {
+      background-color: lightgray;
+      padding: 0 0.2em;
     }
   }
 
@@ -24,10 +19,14 @@
     width: 100%;
     height: 30em;
   }
+
+  details > summary {
+    cursor: pointer;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
-  .video-details .table > div :nth-child(2) {
+  .video-details tr > td:nth-child(2) {
     background-color: dimgray;
   }
 }
