@@ -1,7 +1,8 @@
 .form {
-  max-width: 1000px;
+  max-width: 900px;
+  margin: auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 3em;
+  grid-template-columns: 1fr 3em;
   gap: 0.1em;
   * {
     font-size: 1.3em;
@@ -33,10 +34,23 @@
   }
 }
 
+.result-container {
+  max-width: max-content;
+  margin: auto;
+}
+
+// viewport-width >= 1300px (mobile-first)
 @media (min-width: 1300px) {
+  .form {
+    max-width: 1300px;
+  }
   .result-container {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 0.5em;
+
+    & > :nth-child(1) {
+      min-width: 400px;
+    }
   }
 }

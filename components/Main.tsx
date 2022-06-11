@@ -82,8 +82,8 @@ export default function Main() {
         </button>
       </form>
 
-      {!response && <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
       <div className={style["result-container"]}>
+        {!response && <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
         <VideoDetails response={response} />
         {response &&
           (response.streamingData ? (
