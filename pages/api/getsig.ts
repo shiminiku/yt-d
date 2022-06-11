@@ -1,15 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import got from "got"
 import logAPIAccess from "../../lib/apiLogger"
-import { getURL } from "youtube-otosuyatu"
+import { getPlayerResponse, getVideoURL } from "youtube-otosuyatu"
 
 export default async function getsig(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)
-
-  const watch = await got(`https://www.youtube.com/watch?v=${req.query.v}`)
-  const url = await getURL(req.query.sc, `https://www.youtube.com${watch.body.match(/script src="(.*?base.js)"/)[1]}`)
-
   res.setHeader("Access-Control-Allow-Origin", "*")
+
+  if (typeof req.query.v != "string" || typeof req.query.sc != "string") {
+    res.status(400)
+    res.send("")
+    return
+  }
+  const { basejsURL } = await getPlayerResponse(req.query.v)
+  const url = await getVideoURL(req.query.sc, basejsURL)
+
   res.setHeader("Content-Type", "text/plain")
   res.send(url)
 }

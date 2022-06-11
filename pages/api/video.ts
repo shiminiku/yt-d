@@ -6,6 +6,11 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)
   res.setHeader("Access-Control-Allow-Origin", "*")
 
+  if (typeof req.query.v != "string") {
+    res.status(500)
+    res.send("")
+    return
+  }
   const { playerResponse } = await getPlayerResponse(req.query.v)
 
   try {
@@ -13,6 +18,6 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
   } catch (e) {
     console.error(e)
     res.status(500)
-    res.send(":(")
+    res.send("")
   }
 }
