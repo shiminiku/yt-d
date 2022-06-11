@@ -47,17 +47,11 @@ export default function Main() {
   const scToUrl = useCallback((sc: string) => {
     setLoading(true)
 
-    const data = {
-      s: decodeURIComponent(sc.match(/s=([^&]*)/)?.[1] ?? ""),
-      sp: decodeURIComponent(sc.match(/sp=([^&]*)/)?.[1] ?? ""),
-      url: decodeURIComponent(sc.match(/url=([^&]*)/)?.[1] ?? ""),
-    }
-
-    fetch(`/api/getsig?v=${videoId.current}&s=${data.s}`)
+    fetch(`/api/getsig?v=${videoId.current}&sc=${encodeURIComponent(sc)}`)
       .then((v) => v.text())
-      .then((sig) => {
+      .then((url) => {
         setLoading(false)
-        setDeciphered((ps) => ({ ...ps, [sc]: `${data.url}&${data.sp}=${sig}` }))
+        setDeciphered((ps) => ({ ...ps, [sc]: url }))
       })
   }, [])
 
