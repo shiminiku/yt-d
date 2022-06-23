@@ -6,19 +6,26 @@
   border-radius: 0.2em;
   margin: 0.3em 0;
   border-spacing: 0;
-  td {
+  td,
+  th {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
     padding: 0 0.1em;
   }
   tr > td:nth-child(1) {
-    min-width: 2em;
+    min-width: 2.5em;
     text-align: end;
   }
   .bitrate-text {
     font-family: monospace;
     text-align: end;
   }
+}
+
+.help-btn {
+  padding: 0 0.5em;
+  margin-left: 0.2em;
+  font-size: inherit;
 }
 
 .overflow-scroll {
@@ -40,7 +47,8 @@
   }
   .table-streaming {
     border-color: gray;
-    td {
+    td,
+    th {
       border-color: gray;
     }
   }
