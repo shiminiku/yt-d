@@ -6,7 +6,7 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)
   res.setHeader("Access-Control-Allow-Origin", "*")
 
-  const { playerResponse } = await getPlayerResponse(req.query.v)
+  const { playerResponse } = await getPlayerResponse(req.query.v as string)
 
   try {
     res.json(playerResponse)
