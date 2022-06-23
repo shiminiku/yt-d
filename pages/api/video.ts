@@ -6,7 +6,7 @@ export default async function video(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)
   res.setHeader("Access-Control-Allow-Origin", "*")
 
-  if (typeof req.query.v != "string" || typeof req.query.sc != "string") {
+  if (typeof req.query.v != "string") {
     res.status(400)
     res.send("")
     return
