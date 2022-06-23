@@ -22,12 +22,39 @@ function fetchVideo(videoId: string): Promise<any> {
   })
 }
 
+const HELP = [
+  {
+    title: "MIMEタイプ (video,audio/mp4; codecs=...)",
+    body: [
+      "videoではじまるなら動画、audioなら音声",
+      '"video,audio/mp4" の "mp4" はファイル形式,拡張子(コンテナフォーマット)',
+      '"codecs=..."の"..."が、"avc1"ではじまるなら H.264、"mp4a"なら AAC、"av01"なら AV1 がコーデックに使われている',
+      "ほかはそのまま調べれば出てくる",
+    ],
+  },
+  {
+    title: "両方 (動画と音声が一体化)",
+    body: ["動画と音声が一緒になったファイルです", "ですが画質は最高でも720p30fpsまでです"],
+  },
+  {
+    title: "分割 (動画と音声がそれぞれで分割)",
+    body: [
+      "動画と音声がそれぞれ別のファイルになります",
+      "「両方」とは違いアップロードされた最高画質まであります",
+      "個別にダウンロードした後に、別々のファイルを1つにする必要があります",
+      "音声だけでいい場合は便利です",
+    ],
+  },
+]
+
 export default function Main() {
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
   const [deciphered, setDeciphered] = useState<{ [key: string]: string }>({})
   const videoIdInput = useRef<HTMLInputElement>()
   const videoId = useRef<string>(null)
+  const helpDialog = useRef<HTMLDialogElement>()
+  const [help, setHelp] = useState(HELP[0])
 
   const getVideo = useCallback(() => {
     videoId.current = videoIdInput.current.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
@@ -53,6 +80,11 @@ export default function Main() {
         setLoading(false)
         setDeciphered((ps) => ({ ...ps, [sc]: url }))
       })
+  }, [])
+
+  const showHelp = useCallback((i: number) => {
+    setHelp(HELP[i])
+    helpDialog.current.showModal()
   }, [])
 
   return (
@@ -92,14 +124,32 @@ export default function Main() {
                 <h2>配信</h2>
                 {response.streamingData.formats && (
                   <>
-                    <h3>両方 (動画と音声が一体化)</h3>
-                    <StreamsTable streams={response.streamingData.formats} decipherFunction={scToUrl} />
+                    <h3>
+                      両方 (動画と音声が一体化)
+                      <button className={style["help-btn"]} onClick={() => showHelp(1)}>
+                        ?
+                      </button>
+                    </h3>
+                    <StreamsTable
+                      streams={response.streamingData.formats}
+                      decipherFunction={scToUrl}
+                      showHelp={showHelp}
+                    />
                   </>
                 )}
                 {response.streamingData.adaptiveFormats && (
                   <>
-                    <h3>分割 (動画と音声がそれぞれで分割)</h3>
-                    <StreamsTable streams={response.streamingData.adaptiveFormats} decipherFunction={scToUrl} />
+                    <h3>
+                      分割 (動画と音声がそれぞれで分割)
+                      <button className={style["help-btn"]} onClick={() => showHelp(2)}>
+                        ?
+                      </button>
+                    </h3>
+                    <StreamsTable
+                      streams={response.streamingData.adaptiveFormats}
+                      decipherFunction={scToUrl}
+                      showHelp={showHelp}
+                    />
                   </>
                 )}
               </div>
@@ -110,6 +160,16 @@ export default function Main() {
             </div>
           ))}
       </div>
+
+      <dialog ref={helpDialog}>
+        <h2>{help.title}</h2>
+        {help.body.map((v, i) => (
+          <p key={i}>{v}</p>
+        ))}
+        <form method="dialog">
+          <button>閉じる</button>
+        </form>
+      </dialog>
     </>
   )
 }

@@ -2,13 +2,28 @@ import { useContext } from "react"
 import style from "/styles/StreamsTable.module.scss"
 import { StoreContext } from "./Main"
 
-export function StreamsTable({ streams, decipherFunction }) {
+export function StreamsTable({ streams, decipherFunction, showHelp }) {
   const { loading, deciphered } = useContext(StoreContext)
 
   return (
     <div className={style["overflow-scroll"]}>
       <table className={style["table-streaming"]}>
         <tbody>
+          <tr>
+            <th>
+              <abbr title="おそらく、内部的に使われている形式の識別子またはタグ">itag</abbr>
+            </th>
+            <th>
+              MIMEタイプ
+              <button className={style["help-btn"]} onClick={() => showHelp(0)}>
+                ?
+              </button>
+            </th>
+            <th>画質</th>
+            <th>ビットレート</th>
+            <th>サイズ</th>
+            <th>リンク</th>
+          </tr>
           {streams?.map?.((stream: any) => {
             let bitrateSuffix = "Kbps"
             let b = stream.averageBitrate / 1000
