@@ -161,7 +161,26 @@ export default function Main() {
           ))}
       </div>
 
-      <dialog ref={helpDialog}>
+      <dialog
+        ref={helpDialog}
+        onClick={(e) => {
+          const target = e.target as HTMLDialogElement
+
+          if (target.tagName !== "DIALOG")
+            //This prevents issues with forms
+            return
+
+          const rect = target.getBoundingClientRect()
+
+          const clickedInDialog =
+            rect.top <= e.clientY &&
+            e.clientY <= rect.top + rect.height &&
+            rect.left <= e.clientX &&
+            e.clientX <= rect.left + rect.width
+
+          if (clickedInDialog === false) target.close()
+        }}
+      >
         <h2>{help.title}</h2>
         {help.body.map((v, i) => (
           <p key={i}>{v}</p>
