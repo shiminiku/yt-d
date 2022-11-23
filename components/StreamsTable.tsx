@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import style from "/styles/StreamsTable.module.scss"
 import { StoreContext } from "./Main"
+import { HELPS } from "../lib/Help"
 
 export function StreamsTable({ streams, decipherFunction, showHelp }) {
   const { loading, deciphered } = useContext(StoreContext)
@@ -15,7 +16,7 @@ export function StreamsTable({ streams, decipherFunction, showHelp }) {
             </th>
             <th>
               MIMEタイプ
-              <button className={style["help-btn"]} onClick={() => showHelp(0)}>
+              <button className={style["help-btn"]} onClick={() => showHelp(HELPS.mimeType)}>
                 ?
               </button>
             </th>
