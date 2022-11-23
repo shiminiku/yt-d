@@ -15,13 +15,14 @@ export const StoreContext = createContext<{
 })
 
 function fetchVideo(videoId: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    fetch(`/api/video?v=${videoId}`)
-      .then((v) => v.json())
-      .then((v) => resolve(v))
-      .catch((r) => reject(r))
-  })
-}
+  if ("ytdDirectFetch" in window) return window["ytdDirectFetch"](videoId)
+  else
+    return new Promise((resolve, reject) => {
+      fetch(`/api/video?v=${videoId}`)
+        .then((v) => v.json())
+        .then((v) => resolve(v))
+        .catch((r) => reject(r))
+    })
 }
 
 export default function Main() {
