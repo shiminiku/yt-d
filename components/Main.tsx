@@ -22,8 +22,10 @@ function fetchVideo(videoId: string): Promise<any> {
   })
 }
 
-const HELP = [
-  {
+type Help = { title: string; body: string[] }
+
+const HELPS: { [key: string]: Help } = {
+  mimeType: {
     title: "MIMEタイプ (video,audio/mp4; codecs=...)",
     body: [
       "videoではじまるなら動画、audioなら音声",
@@ -32,11 +34,11 @@ const HELP = [
       "ほかはそのまま調べれば出てくる",
     ],
   },
-  {
+  bothFormats: {
     title: "両方 (動画と音声が一体化)",
     body: ["動画と音声が一緒になったファイルです", "ですが画質は最高でも720p30fpsまでです"],
   },
-  {
+  adaptiveFormats: {
     title: "分割 (動画と音声がそれぞれで分割)",
     body: [
       "動画と音声がそれぞれ別のファイルになります",
@@ -45,7 +47,7 @@ const HELP = [
       "音声だけでいい場合は便利です",
     ],
   },
-]
+}
 
 export default function Main() {
   const [loading, setLoading] = useState(false)
@@ -54,7 +56,7 @@ export default function Main() {
   const videoIdInput = useRef<HTMLInputElement>()
   const videoId = useRef<string>(null)
   const helpDialog = useRef<HTMLDialogElement>()
-  const [help, setHelp] = useState(HELP[0])
+  const [help, setHelp] = useState<Help | null>(null)
 
   const getVideo = useCallback(() => {
     videoId.current = videoIdInput.current.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
@@ -82,8 +84,8 @@ export default function Main() {
       })
   }, [])
 
-  const showHelp = useCallback((i: number) => {
-    setHelp(HELP[i])
+  const showHelp = useCallback((i: keyof typeof HELPS) => {
+    setHelp(HELPS[i])
     helpDialog.current.showModal()
   }, [])
 
@@ -126,7 +128,7 @@ export default function Main() {
                   <>
                     <h3>
                       両方 (動画と音声が一体化)
-                      <button className={style["help-btn"]} onClick={() => showHelp(1)}>
+                      <button className={style["help-btn"]} onClick={() => showHelp("bothFormats")}>
                         ?
                       </button>
                     </h3>
@@ -141,7 +143,7 @@ export default function Main() {
                   <>
                     <h3>
                       分割 (動画と音声がそれぞれで分割)
-                      <button className={style["help-btn"]} onClick={() => showHelp(2)}>
+                      <button className={style["help-btn"]} onClick={() => showHelp("adaptiveFormats")}>
                         ?
                       </button>
                     </h3>
@@ -181,8 +183,8 @@ export default function Main() {
           if (clickedInDialog === false) target.close()
         }}
       >
-        <h2>{help.title}</h2>
-        {help.body.map((v, i) => (
+        <h2>{help?.title}</h2>
+        {help?.body.map((v, i) => (
           <p key={i}>{v}</p>
         ))}
         <form method="dialog">
