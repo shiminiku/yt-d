@@ -15,7 +15,7 @@ export const StoreContext = createContext<{
 })
 
 function fetchVideo(videoId: string): Promise<any> {
-  if ("ytdDirectFetch" in window) return window["ytdDirectFetch"](videoId)
+  if ("ytdDirectFetch" in window) return (window["ytdDirectFetch"] as any)(videoId)
   else
     return new Promise((resolve, reject) => {
       fetch(`/api/video?v=${videoId}`)
