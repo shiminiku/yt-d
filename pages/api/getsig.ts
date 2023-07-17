@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import logAPIAccess from "../../lib/apiLogger"
-import { getPlayerResponse, getSCVideoURL } from "youtube-otosuyatu/dist/index"
+import { getPlayerResponse, getSCVideoURL } from "youtube-otosuyatu"
 
 export default async function getsig(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)

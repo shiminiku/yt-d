@@ -19,7 +19,7 @@ dependencies:
     version: 18.2.0(react@18.2.0)
   youtube-otosuyatu:
     specifier: github:owatu/youtube-otosuyatu
-    version: github.com/owatu/youtube-otosuyatu/118710e77eb6fa7bb0647a88f7778e800398621a
+    version: github.com/owatu/youtube-otosuyatu/1372109af3c72edf5ee34da867ee00b5fb7d3200
 
 devDependencies:
   '@types/node':
@@ -2505,10 +2505,10 @@ packages:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false
 
-  github.com/owatu/youtube-otosuyatu/118710e77eb6fa7bb0647a88f7778e800398621a:
-    resolution: {tarball: https://codeload.github.com/owatu/youtube-otosuyatu/tar.gz/118710e77eb6fa7bb0647a88f7778e800398621a}
+  github.com/owatu/youtube-otosuyatu/1372109af3c72edf5ee34da867ee00b5fb7d3200:
+    resolution: {tarball: https://codeload.github.com/owatu/youtube-otosuyatu/tar.gz/1372109af3c72edf5ee34da867ee00b5fb7d3200}
     name: youtube-otosuyatu
-    version: 0.4.0
+    version: 0.4.1
     hasBin: true
     dependencies:
       got: 13.0.0
