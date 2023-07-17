@@ -10,6 +10,8 @@ export default function Index() {
         <meta property="og:title" content="YT Downloader" />
         <meta name="og:description" content="とてもシンプルな、YouTubeのダウンローダー" />
         <meta property="og:image" content="https://yt-d.vercel.app/favicon.ico" />
+
+        <link rel="preload" as="image" href="/trouble-yt.svg" />
       </Head>
       <Main />
     </>
