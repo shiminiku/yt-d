@@ -8,10 +8,10 @@ import { Help, HELPS } from "../lib/Help"
 
 export const StoreContext = createContext<{
   loading: boolean
-  deciphered: { [key: string]: string }
+  urlscs: { [key: string]: string }
 }>({
   loading: false,
-  deciphered: {},
+  urlscs: {},
 })
 
 function fetchVideo(videoId: string): Promise<any> {
@@ -28,7 +28,7 @@ function fetchVideo(videoId: string): Promise<any> {
 export default function Main() {
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
-  const [deciphered, setDeciphered] = useState<{ [key: string]: string }>({})
+  const [urlscs, seturlscs] = useState<{ [key: string]: string }>({})
   const videoIdInput = useRef<HTMLInputElement>()
   const videoId = useRef<string>(null)
   const helpDialog = useRef<HTMLDialogElement>()
@@ -49,14 +49,24 @@ export default function Main() {
       .catch(() => setLoading(false))
   }, [])
 
-  const scToUrl = useCallback((sc: string) => {
+  const geturl = useCallback((url: string) => {
+    setLoading(true)
+
+    fetch(`/api/geturl?v=${videoId.current}&url=${encodeURIComponent(url)}`)
+      .then((v) => v.text())
+      .then((v) => {
+        setLoading(false)
+        seturlscs((ps) => ({ ...ps, [url]: v }))
+      })
+  }, [])
+  const getsig = useCallback((sc: string) => {
     setLoading(true)
 
     fetch(`/api/getsig?v=${videoId.current}&sc=${encodeURIComponent(sc)}`)
       .then((v) => v.text())
-      .then((url) => {
+      .then((v) => {
         setLoading(false)
-        setDeciphered((ps) => ({ ...ps, [sc]: url }))
+        seturlscs((ps) => ({ ...ps, [sc]: v }))
       })
   }, [])
 
@@ -97,7 +107,7 @@ export default function Main() {
         <VideoDetails response={response} />
         {response &&
           (response.streamingData ? (
-            <StoreContext.Provider value={{ loading, deciphered }}>
+            <StoreContext.Provider value={{ loading, urlscs }}>
               <div>
                 <h2>配信</h2>
                 {response.streamingData.formats && (
@@ -110,7 +120,8 @@ export default function Main() {
                     </h3>
                     <StreamsTable
                       streams={response.streamingData.formats}
-                      decipherFunction={scToUrl}
+                      geturl={geturl}
+                      getsig={getsig}
                       showHelp={showHelp}
                     />
                   </>
@@ -125,7 +136,8 @@ export default function Main() {
                     </h3>
                     <StreamsTable
                       streams={response.streamingData.adaptiveFormats}
-                      decipherFunction={scToUrl}
+                      geturl={geturl}
+                      getsig={getsig}
                       showHelp={showHelp}
                     />
                   </>

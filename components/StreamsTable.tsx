@@ -3,8 +3,38 @@ import style from "/styles/StreamsTable.module.scss"
 import { StoreContext } from "./Main"
 import { HELPS } from "../lib/Help"
 
-export function StreamsTable({ streams, decipherFunction, showHelp }) {
-  const { loading, deciphered } = useContext(StoreContext)
+function downloadLink(stream: any, urlscs: { [x: string]: string }, geturl: any, getsig: any, loading: boolean) {
+  if (stream.url && urlscs[stream.url]) {
+    return (
+      <a target="_blank" href={urlscs[stream.url]} rel="noreferrer">
+        開く
+      </a>
+    )
+  } else if (stream.url) {
+    return (
+      <button onClick={() => geturl(stream.url)} disabled={loading}>
+        リンクを取得
+      </button>
+    )
+  } else if (stream.signatureCipher && urlscs[stream.signatureCipher]) {
+    return (
+      <a target="_blank" href={urlscs[stream.signatureCipher]} rel="noreferrer">
+        開く
+      </a>
+    )
+  } else if (stream.signatureCipher) {
+    return (
+      <button onClick={() => getsig(stream.signatureCipher)} disabled={loading}>
+        リンクを取得
+      </button>
+    )
+  }
+
+  return null
+}
+
+export function StreamsTable({ streams, geturl, getsig, showHelp }) {
+  const { loading, urlscs } = useContext(StoreContext)
 
   return (
     <div className={style["overflow-scroll"]}>
@@ -75,27 +105,7 @@ export function StreamsTable({ streams, decipherFunction, showHelp }) {
                 <td className={style["bitrate-text"]}>
                   {length} {lenSuffix}
                 </td>
-                {stream.url ? (
-                  <td>
-                    <a target="_blank" href={stream.url} rel="noreferrer">
-                      開く
-                    </a>
-                  </td>
-                ) : stream.signatureCipher ? (
-                  <td>
-                    {deciphered[stream.signatureCipher] ? (
-                      <a target="_blank" href={deciphered[stream.signatureCipher]} rel="noreferrer">
-                        開く
-                      </a>
-                    ) : (
-                      <button onClick={() => decipherFunction(stream.signatureCipher)} disabled={loading}>
-                        リンクを取得
-                      </button>
-                    )}
-                  </td>
-                ) : (
-                  <td></td>
-                )}
+                <td>{downloadLink(stream, urlscs, geturl, getsig, loading)}</td>
               </tr>
             )
           })}
