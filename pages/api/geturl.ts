@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import logAPIAccess from "../../lib/apiLogger"
-import { getPlayerResponse, getVideoURL } from "youtube-otosuyatu"
+import { getPlayerResponse, getVideoURL } from "@shiminiku/yt-o"
 
 export default async function geturl(req: NextApiRequest, res: NextApiResponse) {
   logAPIAccess(req)

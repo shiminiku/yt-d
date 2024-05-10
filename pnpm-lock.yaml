@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@shiminiku/yt-o':
+    specifier: 1.0.0-rc.1
+    version: 1.0.0-rc.1
   got:
     specifier: ^13.0.0
     version: 13.0.0
@@ -17,9 +20,6 @@ dependencies:
   react-dom:
     specifier: ^18.3.1
     version: 18.3.1(react@18.3.1)
-  youtube-otosuyatu:
-    specifier: github:owatu/youtube-otosuyatu
-    version: git/github.com+owatu/youtube-otosuyatu/9d99bce98093cdf7d72955a208ed0db1643fa4ca
 
 devDependencies:
   '@types/node':
@@ -241,6 +241,13 @@ packages:
   /@rushstack/eslint-patch@1.10.2:
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
     dev: true
+
+  /@shiminiku/yt-o@1.0.0-rc.1:
+    resolution: {integrity: sha512-Zpq7V09lew0EAa7OIFTgwYmGvfP1ROhhL2MBc1fREe+pvl5ux/7cpHCNnvOW98AAIHo8eqY4UPdkt0WLZ4OBzw==}
+    hasBin: true
+    dependencies:
+      got: 13.0.0
+    dev: false
 
   /@sindresorhus/is@5.6.0:
     resolution: {integrity: sha512-TV7t8GKYaJWsn00tFDqBw8+Uqmr8A0fRU1tvTQhyZzGv0sJCGRQL3JGMI3ucuKo3XIZdUP+Lx7/gh2t3lewy7g==}
@@ -2669,12 +2676,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  git/github.com+owatu/youtube-otosuyatu/9d99bce98093cdf7d72955a208ed0db1643fa4ca:
-    resolution: {commit: 9d99bce98093cdf7d72955a208ed0db1643fa4ca, repo: git@github.com:owatu/youtube-otosuyatu.git, type: git}
-    name: youtube-otosuyatu
-    version: 0.4.1
-    hasBin: true
-    dependencies:
-      got: 13.0.0
-    dev: false
