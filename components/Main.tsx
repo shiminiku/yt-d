@@ -27,6 +27,7 @@ function fetchVideo(videoId: string): Promise<any> {
 
 export default function Main() {
   const [loading, setLoading] = useState(false)
+  const [loadingText, setLoadingText] = useState<string | null>(null)
   const [response, setResponse] = useState(null)
   const [urlscs, seturlscs] = useState<{ [key: string]: string }>({})
   const videoIdInput = useRef<HTMLInputElement>()
@@ -38,33 +39,42 @@ export default function Main() {
     videoId.current = videoIdInput.current.value.match(/[0-9a-zA-Z-_]{11}/)?.[0]
     if (!videoId.current) return
 
+    setLoadingText("動画の情報を取得中…")
     setLoading(true)
     setResponse(null)
 
     fetchVideo(videoId.current)
       .then((v) => {
         setLoading(false)
+        setLoadingText(null)
         setResponse(v)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        setLoading(false)
+        setLoadingText(null)
+      })
   }, [])
 
   const geturl = useCallback((url: string) => {
+    setLoadingText("リンクを取得中…")
     setLoading(true)
 
     fetch(`/api/geturl?v=${videoId.current}&url=${encodeURIComponent(url)}`)
       .then((v) => v.text())
       .then((v) => {
+        setLoadingText(null)
         setLoading(false)
         seturlscs((ps) => ({ ...ps, [url]: v }))
       })
   }, [])
   const getsig = useCallback((sc: string) => {
+    setLoadingText("署名済みリンクを取得中…")
     setLoading(true)
 
     fetch(`/api/getsig?v=${videoId.current}&sc=${encodeURIComponent(sc)}`)
       .then((v) => v.text())
       .then((v) => {
+        setLoadingText(null)
         setLoading(false)
         seturlscs((ps) => ({ ...ps, [sc]: v }))
       })
@@ -80,6 +90,7 @@ export default function Main() {
       {loading && (
         <div className={style["loading"]}>
           <Image src={yt} alt="loading" />
+          <p>{loadingText}</p>
         </div>
       )}
 

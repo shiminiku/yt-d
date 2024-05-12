@@ -26,11 +26,19 @@
   background-color: hsla(0, 0%, 0%, 0.3);
   backdrop-filter: blur(0.1em);
 
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
   & > * {
     object-fit: cover;
     animation: loading 0.5s ease-in infinite alternate;
+  }
+  p {
+    background-color: white;
+    padding: 0.5em 1em;
   }
 }
 
@@ -43,6 +51,12 @@
 .result-container {
   max-width: max-content;
   margin: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .loading p {
+    background-color: black;
+  }
 }
 
 // viewport-width >= 1300px (mobile-first)
