@@ -10,6 +10,7 @@ export const HELPS = {
       "videoではじまるなら動画、audioなら音声",
       '"video,audio/mp4" の "mp4" はファイル形式,拡張子(コンテナフォーマット)',
       '"codecs=..."の"..."が、"avc1"ではじまるなら H.264、"mp4a"なら AAC、"av01"なら AV1 がコーデックに使われている',
+      "(avc1 = Advanced Video Coding, mp4a = mp4 Audio, av01 = AOMedia Video 1)",
       "ほかはそのまま調べれば出てくる",
     ],
   },
