@@ -55,7 +55,7 @@ export function StreamsTable({ streams, geturl, getsig, showHelp }) {
             <th>サイズ</th>
             <th>リンク</th>
           </tr>
-          {streams?.map?.((stream: any) => {
+          {streams?.map?.((stream: any, i: number) => {
             let bitrateSuffix = "Kbps"
             let b = stream.averageBitrate / 1000
             if (b / 1000 >= 1) {
@@ -78,7 +78,7 @@ export function StreamsTable({ streams, geturl, getsig, showHelp }) {
             const length = len.toFixed(2)
 
             return (
-              <tr key={stream.itag}>
+              <tr key={i}>
                 <td>{stream.itag}</td>
                 <td>
                   <code>
@@ -97,7 +97,17 @@ export function StreamsTable({ streams, geturl, getsig, showHelp }) {
                 </td>
                 <td>
                   {stream.height ? stream.height + "p" : ""}
-                  {stream.fps ? stream.fps + "fps" : <span className={style["gray-text"]}>(音声)</span>}
+                  {stream.fps ? (
+                    stream.fps + "fps"
+                  ) : (
+                    <span className={style["gray-text"]}>
+                      {stream.isDrc ? (
+                        <abbr title="Dynamic range compression (ダイナミックレンジ圧縮)">DRC</abbr>
+                      ) : (
+                        "(音声)"
+                      )}
+                    </span>
+                  )}
                 </td>
                 <td className={style["bitrate-text"]}>
                   {bitrate} {bitrateSuffix}

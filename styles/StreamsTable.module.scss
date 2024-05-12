@@ -33,13 +33,13 @@
 }
 
 .gray-text {
-  color: gray;
+  color: dimgray;
 }
 .video-mimetype-text {
-  color: hsl(240, 60%, 40%);
+  color: hsl(240, 60%, 50%);
 }
 .audio-mimetype-text {
-  color: hsl(0, 60%, 40%);
+  color: hsl(0, 60%, 50%);
 }
 @media (prefers-color-scheme: dark) {
   .gray-text {
