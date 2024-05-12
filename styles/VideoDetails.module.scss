@@ -1,4 +1,7 @@
 .video-details {
+  table {
+    width: 100%;
+  }
   tr > td {
     &:nth-child(1) {
       display: inline-block;
@@ -11,8 +14,7 @@
   }
 
   .thumbnail {
-    max-width: 100%;
-    max-height: 300px;
+    height: 100%;
   }
 
   textarea {
@@ -22,6 +24,25 @@
 
   details > summary {
     cursor: pointer;
+  }
+}
+
+.thumbnail-container {
+  height: 200px;
+  text-align: center;
+  background-color: black;
+  padding: 2px;
+}
+
+@media (width >= 1300px) {
+  .video-details .thumbnail {
+    height: unset;
+    max-width: 90%;
+  }
+
+  .thumbnail-container {
+    height: unset;
+    width: 100%;
   }
 }
 
