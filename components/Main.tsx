@@ -5,6 +5,7 @@ import style from "/styles/Main.module.scss"
 import { VideoDetails } from "./VideoDetailsTable"
 import { StreamsTable } from "./StreamsTable"
 import { Help, HELPS } from "../lib/Help"
+import { APIResp_video } from "../pages/api/video"
 
 export const StoreContext = createContext<{
   loading: boolean
@@ -28,7 +29,7 @@ function fetchVideo(videoId: string): Promise<any> {
 export default function Main() {
   const [loading, setLoading] = useState(false)
   const [loadingText, setLoadingText] = useState<string | null>(null)
-  const [response, setResponse] = useState(null)
+  const [response, setResponse] = useState<APIResp_video | null>(null)
   const [urlscs, seturlscs] = useState<{ [key: string]: string }>({})
   const videoIdInput = useRef<HTMLInputElement>()
   const videoId = useRef<string>(null)
@@ -55,35 +56,51 @@ export default function Main() {
       })
   }, [])
 
-  const geturl = useCallback((url: string) => {
-    setLoadingText("リンクを取得中…")
-    setLoading(true)
+  const getURL = useCallback(
+    (url: string) => {
+      setLoadingText("リンクを取得中…")
+      setLoading(true)
 
-    fetch(`/api/geturl?v=${videoId.current}&url=${encodeURIComponent(url)}`)
-      .then((v) => v.text())
-      .then((v) => {
-        setLoadingText(null)
-        setLoading(false)
-        seturlscs((ps) => ({ ...ps, [url]: v }))
-      })
-  }, [])
-  const getsig = useCallback((sc: string) => {
-    setLoadingText("署名済みリンクを取得中…")
-    setLoading(true)
+      fetch(
+        `/api/geturl?v=${videoId.current}&url=${encodeURIComponent(url)}&basejs=${encodeURIComponent(
+          response.basejsURL
+        )}`
+      )
+        .then((v) => v.text())
+        .then((v) => {
+          setLoadingText(null)
+          setLoading(false)
+          seturlscs((ps) => ({ ...ps, [url]: v }))
+        })
+    },
+    [response]
+  )
+  const getSCURL = useCallback(
+    (sc: string) => {
+      setLoadingText("署名済みリンクを取得中…")
+      setLoading(true)
 
-    fetch(`/api/getsig?v=${videoId.current}&sc=${encodeURIComponent(sc)}`)
-      .then((v) => v.text())
-      .then((v) => {
-        setLoadingText(null)
-        setLoading(false)
-        seturlscs((ps) => ({ ...ps, [sc]: v }))
-      })
-  }, [])
+      fetch(
+        `/api/getsig?v=${videoId.current}&sc=${encodeURIComponent(sc)}&basejs=${encodeURIComponent(response.basejsURL)}`
+      )
+        .then((v) => v.text())
+        .then((v) => {
+          setLoadingText(null)
+          setLoading(false)
+          seturlscs((ps) => ({ ...ps, [sc]: v }))
+        })
+    },
+    [response]
+  )
 
   const showHelp = useCallback((help: Help) => {
     setHelp(help)
     helpDialog.current.showModal()
   }, [])
+
+  const streamingData = response?.playerResponse.streamingData
+  const formats = streamingData?.formats
+  const adaptiveFormats = streamingData?.adaptiveFormats
 
   return (
     <>
@@ -115,13 +132,13 @@ export default function Main() {
 
       <div className={style["result-container"]}>
         {!response && <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>}
-        <VideoDetails response={response} />
+        <VideoDetails response={response?.playerResponse} />
         {response &&
-          (response.streamingData ? (
+          (streamingData ? (
             <StoreContext.Provider value={{ loading, urlscs }}>
               <div>
                 <h2>配信</h2>
-                {response.streamingData.formats && (
+                {formats && (
                   <>
                     <h3>
                       両方 (動画と音声が一体化)
@@ -129,15 +146,10 @@ export default function Main() {
                         ?
                       </button>
                     </h3>
-                    <StreamsTable
-                      streams={response.streamingData.formats}
-                      geturl={geturl}
-                      getsig={getsig}
-                      showHelp={showHelp}
-                    />
+                    <StreamsTable streams={formats} geturl={getURL} getsig={getSCURL} showHelp={showHelp} />
                   </>
                 )}
-                {response.streamingData.adaptiveFormats && (
+                {adaptiveFormats && (
                   <>
                     <h3>
                       分割 (動画と音声がそれぞれで分割)
@@ -145,12 +157,7 @@ export default function Main() {
                         ?
                       </button>
                     </h3>
-                    <StreamsTable
-                      streams={response.streamingData.adaptiveFormats}
-                      geturl={geturl}
-                      getsig={getsig}
-                      showHelp={showHelp}
-                    />
+                    <StreamsTable streams={adaptiveFormats} geturl={getURL} getsig={getSCURL} showHelp={showHelp} />
                   </>
                 )}
               </div>

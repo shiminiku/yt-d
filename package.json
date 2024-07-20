@@ -7,7 +7,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@shiminiku/yt-o": "1.0.0-rc.2",
+    "@shiminiku/yt-o": "1.0.0-rc.3",
     "got": "^13.0.0",
     "next": "^14.2.3",
     "react": "^18.3.1",
