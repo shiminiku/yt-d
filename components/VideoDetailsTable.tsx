@@ -41,19 +41,19 @@ export function VideoDetails({ response }) {
         <table>
           <tbody>
             <tr>
-              <td>動画ID</td>
+              <th>動画ID</th>
               <td>{videoDetails.videoId}</td>
             </tr>
             <tr>
-              <td>タイトル</td>
+              <th>タイトル</th>
               <td>{videoDetails.title}</td>
             </tr>
             <tr>
-              <td>投稿者</td>
+              <th>投稿者</th>
               <td>{videoDetails.author}</td>
             </tr>
             <tr>
-              <td>動画時間</td>
+              <th>動画時間</th>
               <td>{toDurationString(videoDetails.lengthSeconds)}</td>
             </tr>
           </tbody>
