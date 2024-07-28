@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@shiminiku/yt-o':
-        specifier: 1.0.0-rc.3
-        version: 1.0.0-rc.3
+        specifier: 1.0.0
+        version: 1.0.0
       got:
         specifier: ^13.0.0
         version: 13.0.0
@@ -161,8 +161,8 @@ packages:
   '@rushstack/eslint-patch@1.10.2':
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
 
-  '@shiminiku/yt-o@1.0.0-rc.3':
-    resolution: {integrity: sha512-d9EAwC2gLyh9DLExBowWM3PoEJrQdRVKO0MHLKWiMKCe+SSLbx850WPp2biTB4b2x/T1FuEsTr1mp20ixSN0ow==}
+  '@shiminiku/yt-o@1.0.0':
+    resolution: {integrity: sha512-FNbSivljjdHOyceq4GjgW3GU3clXzWjzdz2hQaEG56khlm9rnNugoKOVsOHJ3OGtpOkwsJowps2kwmcKPXLUjA==}
     hasBin: true
 
   '@sindresorhus/is@5.6.0':
@@ -1525,7 +1525,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.10.2': {}
 
-  '@shiminiku/yt-o@1.0.0-rc.3':
+  '@shiminiku/yt-o@1.0.0':
     dependencies:
       got: 13.0.0
 
