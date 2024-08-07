@@ -111,6 +111,10 @@ export default function Main() {
         </div>
       )}
 
+      <h2>
+        <center>利用できない状態になってしまい、申し訳ありません。修正は難しいと考えています。</center>
+      </h2>
+
       <form
         className={style["form"]}
         onSubmit={(ev) => {
