@@ -1,4 +1,3 @@
-import { useMemo } from "react"
 import style from "/styles/VideoDetails.module.scss"
 
 function toDurationString(s: number) {
@@ -18,67 +17,58 @@ function toDurationString(s: number) {
   return str.join(":")
 }
 
-export function VideoDetails({ response }) {
-  const res = useMemo(() => {
-    if (!response) return null
-    const r = structuredClone(response)
-    Object.keys(r).forEach((key) => {
-      if (!["playabilityStatus", "streamingData", "captions", "videoDetails"].includes(key)) delete r[key]
-    })
-    return r
-  }, [response])
-
-  if (!response) return <div className={style["video-details"]}></div>
-
-  const { videoDetails } = response
-
+export function VideoDetails({ videoDetails }: { videoDetails: any }) {
   return (
     <div className={style["video-details"]}>
-      <details open>
-        <summary>
-          <h2 style={{ display: "inline" }}>動画の情報</h2>
-        </summary>
-        <table>
-          <tbody>
-            <tr>
-              <th>動画ID</th>
-              <td>{videoDetails.videoId}</td>
-            </tr>
-            <tr>
-              <th>タイトル</th>
-              <td>{videoDetails.title}</td>
-            </tr>
-            <tr>
-              <th>投稿者</th>
-              <td>{videoDetails.author}</td>
-            </tr>
-            <tr>
-              <th>動画時間</th>
-              <td>{toDurationString(videoDetails.lengthSeconds)}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className={style["thumbnail-container"]}>
-          {videoDetails.thumbnail?.thumbnails && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              className={style["thumbnail"]}
-              src={videoDetails.thumbnail.thumbnails[videoDetails.thumbnail.thumbnails.length - 1].url}
-              alt="video thumbnail"
-            />
-          )}
-        </div>
-        <details>
+      {videoDetails && (
+        <details open>
           <summary>
-            <h3 style={{ display: "inline" }}>技術的情報</h3>
+            <h2 style={{ display: "inline" }}>動画の情報</h2>
           </summary>
-          <div>You can read original data from DevTools Network tab</div>
-          <div>
-            Search with <code>{"/api/video?v={videoId}"}</code>
+          <table>
+            <tbody>
+              <tr>
+                <th>動画ID</th>
+                <td>{videoDetails.videoId}</td>
+              </tr>
+              <tr>
+                <th>タイトル</th>
+                <td>{videoDetails.title}</td>
+              </tr>
+              <tr>
+                <th>投稿者</th>
+                <td>{videoDetails.author}</td>
+              </tr>
+              <tr>
+                <th>動画時間</th>
+                <td>{toDurationString(videoDetails.lengthSeconds)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className={style["thumbnail-container"]}>
+            {videoDetails.thumbnail?.thumbnails && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                className={style["thumbnail"]}
+                src={videoDetails.thumbnail.thumbnails[videoDetails.thumbnail.thumbnails.length - 1].url}
+                alt="video thumbnail"
+              />
+            )}
           </div>
-          <textarea readOnly value={JSON.stringify(res, null, 2)} wrap="off"></textarea>
+          <details>
+            <summary>
+              <h3 className="gray-out" style={{ display: "inline" }}>
+                技術的情報について
+              </h3>
+            </summary>
+            <p>生のレスポンスは、DevToolsのネットワークタブから観察できますよ。兄さんや</p>
+            <p>URLのパターンはこんな感じ:</p>
+            <p>
+              <code className="code">{"<...>/playerResponse?v={videoId}"}</code>
+            </p>
+          </details>
         </details>
-      </details>
+      )}
     </div>
   )
 }

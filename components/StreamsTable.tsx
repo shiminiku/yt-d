@@ -1,41 +1,75 @@
-import { useContext } from "react"
+import { URLCache } from "../app/page"
+import { Help, HELPS } from "../lib/Helps"
 import style from "/styles/StreamsTable.module.scss"
-import { StoreContext } from "./Main"
-import { HELPS } from "../lib/Help"
 
-function downloadLink(stream: any, urlscs: { [x: string]: string }, geturl: any, getsig: any, loading: boolean) {
-  if (stream.url && urlscs[stream.url]) {
-    return (
-      <a target="_blank" href={urlscs[stream.url]} rel="noreferrer">
-        開く
-      </a>
-    )
-  } else if (stream.url) {
-    return (
-      <button onClick={() => geturl(stream.url)} disabled={loading}>
-        リンクを取得
-      </button>
-    )
-  } else if (stream.signatureCipher && urlscs[stream.signatureCipher]) {
-    return (
-      <a target="_blank" href={urlscs[stream.signatureCipher]} rel="noreferrer">
-        開く
-      </a>
-    )
-  } else if (stream.signatureCipher) {
-    return (
-      <button onClick={() => getsig(stream.signatureCipher)} disabled={loading}>
-        リンクを取得
-      </button>
-    )
-  }
-
-  return null
+interface Format {
+  url?: string
+  signatureCipher?: string
 }
 
-export function StreamsTable({ streams, geturl, getsig, showHelp }) {
-  const { loading, urlscs } = useContext(StoreContext)
+type CacheUpdater = (f: (pv: URLCache) => URLCache) => void
 
+function genFmtURL(f: Format, updateCache: CacheUpdater) {
+  const yt_dp = (window as any).yt_dp
+  let url = f.url
+  if (f.signatureCipher) {
+    const sc = new URLSearchParams(f.signatureCipher)
+    const s = sc.get("s")
+    const sp = sc.get("sp")
+    url = sc.get("url") || undefined
+
+    const deS = yt_dp.deSC(s)
+
+    url += `&${sp}=${deS}`
+  }
+
+  if (!url) return
+
+  const pUrl = new URL(url)
+  const nt = pUrl.searchParams.get("n")
+  const deNT = yt_dp.getNToken(nt)
+  pUrl.searchParams.set("n", deNT)
+
+  updateCache((pv) => ({ ...pv, [f.url || f.signatureCipher || ""]: pUrl.toString() }))
+}
+
+function DownloadLink({ f, urlCache, updateCache }: { f: Format; urlCache: URLCache; updateCache: CacheUpdater }) {
+  if (f.url && urlCache[f.url]) {
+    return (
+      <a target="_blank" href={urlCache[f.url]} rel="noreferrer">
+        開く
+      </a>
+    )
+  } else if (f.signatureCipher && urlCache[f.signatureCipher]) {
+    return (
+      <a target="_blank" href={urlCache[f.signatureCipher]} rel="noreferrer">
+        開く
+      </a>
+    )
+  } else {
+    const tryLoop = () => {
+      try {
+        genFmtURL(f, updateCache)
+      } catch {
+        setTimeout(tryLoop, 1000)
+      }
+    }
+    tryLoop()
+    return "取得中…"
+  }
+}
+
+export function StreamsTable({
+  streams,
+  urlCache,
+  updateCache,
+  showHelp,
+}: {
+  streams: any[]
+  urlCache: URLCache
+  updateCache: CacheUpdater
+  showHelp: (help: Help) => void
+}) {
   return (
     <div className={style["overflow-scroll"]}>
       <table className={style["table-streaming"]}>
@@ -81,7 +115,7 @@ export function StreamsTable({ streams, geturl, getsig, showHelp }) {
               <tr key={i}>
                 <td>{stream.itag}</td>
                 <td>
-                  <code>
+                  <code title={stream.mimeType}>
                     {stream.mimeType.startsWith("video") ? (
                       <>
                         <span className={style["video-mimetype-text"]}>{stream.mimeType.slice(0, 5)}</span>
@@ -115,7 +149,9 @@ export function StreamsTable({ streams, geturl, getsig, showHelp }) {
                 <td className={style["bitrate-text"]}>
                   {length} {lenSuffix}
                 </td>
-                <td>{downloadLink(stream, urlscs, geturl, getsig, loading)}</td>
+                <td>
+                  <DownloadLink f={stream} urlCache={urlCache} updateCache={updateCache} />
+                </td>
               </tr>
             )
           })}

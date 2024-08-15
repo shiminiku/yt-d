@@ -3,7 +3,9 @@ export interface Help {
   body: string[]
 }
 
-export const HELPS = {
+export const HELPS: {
+  [key: string]: Help
+} = {
   mimeType: {
     title: "MIMEタイプ (video,audio/mp4; codecs=...)",
     body: [
