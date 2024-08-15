@@ -1,0 +1,71 @@
+.form {
+  margin-top: 1em;
+
+  display: flex;
+  input {
+    flex: 1;
+  }
+  button {
+    padding: 0.2em 1em;
+  }
+  * {
+    font-size: 1rem;
+  }
+}
+
+.helpBtn {
+  padding: 0 0.5em;
+  margin-left: 0.2em;
+  font-size: inherit;
+}
+
+// if (viewport-width >= 1300px) else column (mobile-first css)
+@media (width >= 1300px) {
+  .form {
+    max-width: 1300px;
+  }
+  .splitter {
+    display: grid;
+    grid-template-columns: 500px minmax(0, auto);
+    gap: 0.5em;
+  }
+}
+
+.mTop {
+  margin-top: 0.5em;
+}
+
+@keyframes loading-bounce {
+  from {
+    transform: translateY(-1em);
+  }
+  to {
+    transform: translateY(1em);
+  }
+}
+.loadScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: hsla(0, 0%, 0%, 0.3);
+  backdrop-filter: blur(0.1em);
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  img {
+    object-fit: cover;
+    animation: loading-bounce 0.5s ease-in infinite alternate;
+  }
+  p {
+    background-color: lightgray;
+    color: black;
+    padding: 10px 1em;
+    border-radius: 10px;
+  }
+}
