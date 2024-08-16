@@ -121,6 +121,12 @@ export default function Home() {
         </div>
       )}
 
+      <footer className={style.footer + " full"}>
+        <p>
+          GitHub <a href="https://github.com/shiminiku/yt-d">shiminiku/yt-d</a>
+        </p>
+      </footer>
+
       <dialog
         ref={helpDialog}
         style={{ margin: "auto" }}
@@ -139,7 +145,7 @@ export default function Home() {
       </dialog>
 
       {isLoading && (
-        <div className={style.loadScreen}>
+        <div className={style.loadScreen + " full"}>
           <Image src={yt} alt="読込中…" />
           <p>{loadReason || "よみこみちゅうだよ～ (´・ω・｀)"}</p>
         </div>

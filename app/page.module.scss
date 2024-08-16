@@ -19,6 +19,24 @@
   font-size: inherit;
 }
 
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 0.5em 0;
+  text-align: center;
+  font-size: 0.8rem;
+
+  background-color: black;
+  color: white;
+
+  * {
+    margin: 0;
+  }
+}
+
 // if (viewport-width >= 1300px) else column (mobile-first css)
 @media (width >= 1300px) {
   .form {

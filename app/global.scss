@@ -13,7 +13,7 @@ h6 {
   font-family: sans-serif;
 }
 
-body {
+body > *:not(.full) {
   max-width: 1000px;
   margin: auto;
 }
@@ -41,7 +41,7 @@ dialog::backdrop {
 }
 
 @media (width >= 1300px) {
-  body {
+  body > *:not(.full) {
     max-width: 1300px;
   }
 }
