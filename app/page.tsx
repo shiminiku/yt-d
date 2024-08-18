@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react"
 import style from "./page.module.scss"
-import { GET_playerResponse, sigCodeJSsrc } from "../lib/yt-dp"
+import { GET_watch, sigCodeJSsrc } from "../lib/yt-dp"
 import { VideoDetails } from "../components/VideoDetailsTable"
 import Image from "next/image"
 
@@ -51,7 +51,7 @@ export default function Home() {
 
             updateStatus([true, "動画情報を取得中…"])
 
-            GET_playerResponse(id)
+            GET_watch(id)
               .then((pr) => {
                 setPR(pr.playerResponse)
                 setBaseJsUrl(pr.basejsURL)
