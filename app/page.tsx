@@ -97,7 +97,13 @@ export default function Home() {
                 </button>
               </h3>
               {formats && (
-                <StreamsTable streams={formats} urlCache={urlCache} updateCache={updateURLCache} showHelp={showHelp} />
+                <StreamsTable
+                  streams={formats}
+                  urlCache={urlCache}
+                  updateCache={updateURLCache}
+                  showHelp={showHelp}
+                  radioId="fmt"
+                />
               )}
 
               <h3 className={style.mTop}>
@@ -112,6 +118,7 @@ export default function Home() {
                   urlCache={urlCache}
                   updateCache={updateURLCache}
                   showHelp={showHelp}
+                  radioId="adFmt"
                 />
               )}
             </div>

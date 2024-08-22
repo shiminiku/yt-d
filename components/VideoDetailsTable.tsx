@@ -17,6 +17,7 @@ function toDurationString(s: number) {
   return str.join(":")
 }
 
+// TODO: add filter (like yt-da)
 export function VideoDetails({ videoDetails }: { videoDetails: any }) {
   return (
     <div className={style["video-details"]}>
@@ -64,7 +65,7 @@ export function VideoDetails({ videoDetails }: { videoDetails: any }) {
             <p>生のレスポンスは、DevToolsのネットワークタブから観察できますよ。兄さんや</p>
             <p>URLのパターンはこんな感じ:</p>
             <p>
-              <code className="code">{"<...>/playerResponse?v={videoId}"}</code>
+              <code className="code">{"<...>/watch?v={videoId}"}</code>
             </p>
           </details>
         </details>
