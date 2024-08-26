@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { URLCache } from "../app/page"
 import { Help, HELPS } from "../lib/Helps"
 import style from "/styles/StreamsTable.module.scss"
@@ -92,9 +92,14 @@ export function StreamsTable({
   const radioGroup = `stream-filter--${radioId}`
   const [filterId, setFilter] = useState<number | null>(null)
 
+  const filterStreams = useMemo(
+    () => streams?.filter((s) => (filterId !== null ? s.mimeType.includes(FILTERS[filterId].filter) : true)),
+    [filterId, streams]
+  )
+
   return (
     <div>
-      <div>
+      <div className={style.filters}>
         {FILTERS.map((f, i) => (
           <span key={i}>
             {f.filter.length === 0 ? (
@@ -103,6 +108,7 @@ export function StreamsTable({
               <>
                 <input
                   type="radio"
+                  className={style.filterInput}
                   name={radioGroup}
                   id={`${radioGroup}--${f.filter}`}
                   checked={filterId === i}
@@ -110,7 +116,9 @@ export function StreamsTable({
                     setFilter((p) => (p === i ? null : i))
                   }}
                 />
-                <label htmlFor={`${radioGroup}--${f.filter}`}>{f.label}</label>
+                <label htmlFor={`${radioGroup}--${f.filter}`} className={style.filterLabel}>
+                  {f.label}
+                </label>
               </>
             )}
           </span>
@@ -135,9 +143,8 @@ export function StreamsTable({
               <th>サイズ</th>
               <th>リンク</th>
             </tr>
-            {streams
-              ?.filter((s) => (filterId !== null ? s.mimeType.includes(FILTERS[filterId].filter) : true))
-              ?.map?.((stream: any, i: number) => {
+            {filterStreams.length > 0 ? (
+              filterStreams?.map?.((stream: any, i: number) => {
                 let bitrateSuffix = "Kbps"
                 let b = stream.averageBitrate / 1000
                 if (b / 1000 >= 1) {
@@ -202,7 +209,17 @@ export function StreamsTable({
                     </td>
                   </tr>
                 )
-              })}
+              })
+            ) : (
+              <tr>
+                <td></td>
+                <td>指定の条件では見つかりませんでした</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
