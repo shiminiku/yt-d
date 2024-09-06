@@ -1,18 +1,19 @@
 "use client"
 
 import { useCallback, useRef, useState } from "react"
-import style from "./page.module.scss"
 import { GET_watch, sigCodeJSsrc } from "../lib/yt-dp"
 import { VideoDetails } from "../components/VideoDetailsTable"
 import Image from "next/image"
-
-import yt from "/public/trouble-yt.svg"
 import { StreamsTable } from "../components/StreamsTable"
-import { Help, HELPS } from "../lib/Helps"
+import { Help, HelpButton } from "../lib/Helps"
+import { PlayerResponse } from "@shiminiku/yt-o"
+import { UsefulFormats } from "../components/UsefulFormats"
+import { ShowHelpContext } from "../lib/Contexts"
 
-export interface URLCache {
-  [x: string]: string
-}
+import style from "./page.module.scss"
+import yt from "/public/trouble-yt.svg"
+
+export type URLCache = Record<string, string>
 
 export default function Home() {
   const [[isLoading, loadReason], updateStatus] = useState<[boolean, string | undefined]>([false, undefined])
@@ -28,10 +29,10 @@ export default function Home() {
   const [videoId, setVideoId] = useState<string>()
   // prog poem: null means "none in now", undefined means "initially none"
 
-  const [pr, setPR] = useState<any>()
+  const [pr, setPR] = useState<PlayerResponse>()
   const [baseJsUrl, setBaseJsUrl] = useState<string>()
 
-  const [urlCache, updateURLCache] = useState({})
+  const [urlCache, updateURLCache] = useState<Record<string, string>>({})
 
   const sd = pr?.streamingData
   const formats = sd?.formats
@@ -76,56 +77,49 @@ export default function Home() {
         </button>
       </form>
 
-      {!pr && (
+      {pr ? (
+        <ShowHelpContext.Provider value={showHelp}>
+          <main className={style.splitter}>
+            <VideoDetails videoDetails={pr?.videoDetails} />
+
+            {formats && adFormats ? (
+              <section>
+                <h2>配信</h2>
+
+                <UsefulFormats formats={formats} adFormats={adFormats} urlCache={urlCache} />
+
+                <details>
+                  <summary>
+                    <h3 style={{ display: "inline" }}>配信一覧 (上級者向け)</h3>
+                  </summary>
+
+                  <p className={style.formatsHelp}>
+                    配信一覧表についてのヘルプ
+                    <p>
+                      <HelpButton helpKey="bothFormats">空白より前 (動画と音声が一体化) ?</HelpButton>
+                    </p>
+                    <p>
+                      <HelpButton helpKey="adaptiveFormats">空白より前 (動画と音声がそれぞれで分割) ?</HelpButton>
+                    </p>
+                  </p>
+
+                  <StreamsTable
+                    formats={formats}
+                    adFormats={adFormats}
+                    urlCache={urlCache}
+                    updateCache={updateURLCache}
+                  />
+                </details>
+              </section>
+            ) : (
+              <h2>配信情報が見つかりませんでした</h2>
+            )}
+          </main>
+        </ShowHelpContext.Provider>
+      ) : (
         <center>
           <p>上にリンクを入力して「OK」か「Enterキー」を押してください</p>
         </center>
-      )}
-
-      {pr && (
-        <div className={style.splitter}>
-          <VideoDetails videoDetails={pr?.videoDetails} />
-
-          {sd ? (
-            <div>
-              <h2>配信</h2>
-
-              <h3>
-                両方 (動画と音声が一体化)
-                <button className={style.helpBtn} onClick={() => showHelp(HELPS.bothFormats)}>
-                  ?
-                </button>
-              </h3>
-              {formats && (
-                <StreamsTable
-                  streams={formats}
-                  urlCache={urlCache}
-                  updateCache={updateURLCache}
-                  showHelp={showHelp}
-                  radioId="fmt"
-                />
-              )}
-
-              <h3 className={style.mTop}>
-                分割 (動画と音声がそれぞれで分割)
-                <button className={style.helpBtn} onClick={() => showHelp(HELPS.adaptiveFormats)}>
-                  ?
-                </button>
-              </h3>
-              {adFormats && (
-                <StreamsTable
-                  streams={adFormats}
-                  urlCache={urlCache}
-                  updateCache={updateURLCache}
-                  showHelp={showHelp}
-                  radioId="adFmt"
-                />
-              )}
-            </div>
-          ) : (
-            <h2>配信情報が見つかりませんでした</h2>
-          )}
-        </div>
       )}
 
       <footer className={style.footer + " full"}>
@@ -139,10 +133,10 @@ export default function Home() {
         style={{ margin: "auto" }}
         onClick={(ev) => {
           const target = ev.target as HTMLElement
-          if (!target.closest("container")) helpDialog.current?.close()
+          if (!target.closest(".container")) helpDialog.current?.close()
         }}
       >
-        <div id="container">
+        <div className="container">
           <h2>{help?.title || "おれ、ヘルプ♪"}</h2>
           {help?.body.map((v, i) => <p key={i}>{v}</p>) || <p>おれ、教えるよ♪ おれ、ねこじゃない～♪ おれ、ヘルプ♪</p>}
           <form method="dialog">

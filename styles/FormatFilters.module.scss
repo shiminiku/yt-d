@@ -1,0 +1,58 @@
+.filters {
+  margin: 8px 0;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-wrap: nowrap;
+
+  --filter-border-color: black;
+
+  --filter-background: lightgray;
+  --filter-background-hover: hsl(0, 0%, 70%);
+  --filter-background-checked: hsl(224, 100%, 90%);
+  --filter-background-checked-hover: hsl(224, 100%, 80%);
+}
+@media (prefers-color-scheme: dark) {
+  .filters {
+    --filter-border-color: white;
+
+    --filter-background: dimgray;
+    --filter-background-hover: hsl(0, 0%, 60%);
+    --filter-background-checked: hsl(224, 100%, 60%);
+    --filter-background-checked-hover: hsl(224, 100%, 70%);
+  }
+}
+
+.filterInput {
+  // visually-hidden
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.filterLabel {
+  border: 2px solid var(--filter-border-color);
+  border-radius: 1em;
+  margin-right: 4px;
+  padding: 0 0.5em;
+
+  transition: background-color 0.1s;
+
+  background-color: var(--filter-background);
+  &:hover {
+    background-color: var(--filter-background-hover);
+  }
+}
+
+.filterInput:checked + .filterLabel {
+  background-color: var(--filter-background-checked);
+
+  &:hover {
+    background-color: var(--filter-background-checked-hover);
+  }
+}

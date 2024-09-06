@@ -21,10 +21,6 @@
     width: 98%;
     height: 30em;
   }
-
-  details > summary {
-    cursor: pointer;
-  }
 }
 
 .thumbnail-container {
@@ -35,14 +31,14 @@
 }
 
 @media (width >= 1300px) {
-  .video-details .thumbnail {
-    height: unset;
-    max-width: 90%;
-  }
-
   .thumbnail-container {
-    height: unset;
     width: 100%;
+    height: unset;
+    aspect-ratio: 16 / 9;
+
+    .thumbnail {
+      height: 100%;
+    }
   }
 }
 
