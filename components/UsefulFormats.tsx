@@ -13,14 +13,10 @@ function DownloadBtn({ href, download, children }: { href?: string; download?: s
   )
 }
 
-function findHQ(fmt: (Format | AdFormat)[], type: string, fromZero: boolean = true): Format | AdFormat {
+function findHQ(fmt: (Format | AdFormat)[], type: string): Format | AdFormat {
   const filtered = [...fmt]
     .sort((a, b) => (b.averageBitrate ?? b.bitrate) - (a.averageBitrate ?? a.bitrate))
     .filter((f) => f.mimeType.includes(type))
-  console.log(
-    "wan",
-    filtered.map((f) => f.bitrate)
-  )
   return filtered[0]
 }
 
@@ -39,7 +35,7 @@ export function UsefulFormats({
   adFormats: AdFormat[]
   urlCache: URLCache
 }) {
-  const av = useMemo(() => findHQ(formats, "video", false), [formats]) // audio-video.mp4
+  const av = useMemo(() => findHQ(formats, "video"), [formats]) // audio-video.mp4
 
   const video = useMemo(() => findHQ(adFormats, "video"), [adFormats]) // video.mp4
   const audio = useMemo(() => findHQ(adFormats, "audio"), [adFormats]) // audio.m4a
