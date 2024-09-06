@@ -1,11 +1,13 @@
+import { useContext } from "react"
+import style from "/styles/Helps.module.scss"
+import { ShowHelpContext } from "./Contexts"
+
 export interface Help {
   title: string
   body: string[]
 }
 
-export const HELPS: {
-  [key: string]: Help
-} = {
+export const HELPS = {
   mimeType: {
     title: "MIMEタイプ (video,audio/mp4; codecs=...)",
     body: [
@@ -29,4 +31,21 @@ export const HELPS: {
       "音声だけでいい場合には便利です",
     ],
   },
+  downloading: {
+    title: "ダウンロード",
+    body: [
+      "1. ボタンをクリックする: 新しいタブで開くようになっています",
+      "2. ダウンロードする: ダウンロードボタンや右クリックから保存します",
+      "3. 開いたタブを閉じます: Firefox の場合はこれでダウンロード速度がとても速くなります",
+    ],
+  },
+} satisfies Record<string, Help>
+
+export function HelpButton({ helpKey, children }: { helpKey: keyof typeof HELPS; children: React.ReactNode }) {
+  const showHelp = useContext(ShowHelpContext)
+  return (
+    <button className={style.helpBtn} onClick={() => showHelp?.(HELPS[helpKey])}>
+      {children}
+    </button>
+  )
 }

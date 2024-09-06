@@ -1,75 +1,56 @@
-.filters {
-  margin: 4px 0;
-
-  --filter-background: lightgray;
-  --filter-background-hover: hsl(0, 0%, 70%);
-  --filter-background-checked: lightcyan;
-  --filter-background-checked-hover: hsl(195, 33%, 80%);
-}
-@media (prefers-color-scheme: dark) {
-  .filters {
-    --filter-background: dimgray;
-    --filter-background-hover: hsl(0, 0%, 60%);
-    --filter-background-checked: darkblue;
-    --filter-background-checked-hover: hsl(240, 100%, 50%);
-  }
-}
-
-.filterInput {
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-}
-
-.filterLabel {
-  border: 1px solid gray;
-  border-radius: 0.2em;
-  margin-right: 4px;
-  padding: 0 0.5em;
-  background-color: var(--filter-background);
-
-  &:hover {
-    background-color: var(--filter-background-hover);
-  }
-}
-
-.filterInput:checked + .filterLabel {
-  background-color: var(--filter-background-checked);
-
-  &:hover {
-    background-color: var(--filter-background-checked-hover);
-  }
+.formatsList {
+  max-width: max-content;
+  margin: auto;
 }
 
 .table-streaming {
   white-space: nowrap;
   border: 1px solid black;
-  border-bottom: none;
-  border-right: none;
-  border-radius: 0.2em;
+  border-radius: 0.5em;
   border-spacing: 0;
+  margin: 8px 0;
   td,
   th {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
-    padding: 0 0.1em;
+    padding: 1em 0.2em;
+    &:last-child {
+      border-right: none;
+    }
   }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  .emptyRow {
+    height: 1em;
+    * {
+      border-right: none;
+    }
+  }
+  // itag
   tr > td:nth-child(1) {
     min-width: 2.5em;
     text-align: end;
   }
+  // mime type
   tr > td:nth-child(2) {
     max-width: 20em;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .bitrate-text {
+  // videoQuality
+  .videoQuality {
+    text-align: end;
+  }
+  // bitrate
+  // content size
+  .bytesText {
     font-family: monospace;
     text-align: end;
+  }
+  // link
+  tr > td:nth-child(6) {
+    text-align: center;
   }
 }
 

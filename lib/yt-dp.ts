@@ -1,4 +1,10 @@
-const BASE_URL = "https://yt-dp.smnk.workers.dev"
+import { getWatchPage, PlayerResponse } from "@shiminiku/yt-o"
+
+const BASE_URL = process.env.NODE_ENV === "development" ? "http://localhost:8787" : "https://yt-dp.smnk.workers.dev"
+
+export type GET_watch_resp = Awaited<ReturnType<typeof getWatchPage>>
+export type Format = NonNullable<PlayerResponse["streamingData"]>["formats"][number]
+export type AdFormat = NonNullable<PlayerResponse["streamingData"]>["adaptiveFormats"][number]
 
 // TODO: What the poToken???
 export async function GET_playerResponse(videoId: string) {
@@ -14,13 +20,7 @@ export async function GET_playerResponse(videoId: string) {
 export async function GET_watch(videoId: string) {
   return (await fetch(`${BASE_URL}/watch?v=${videoId}`).then((r) =>
     r.status === 200 ? r.json() : Promise.reject(new Error("returned not 200."))
-  )) as {
-    ytcfg: any
-    pagePlayerResponse: any
-    playerResponse: any
-    basejsURL: string
-    signatureTimestamp: number
-  }
+  )) as GET_watch_resp
 }
 
 export function sigCodeJSsrc(baseJsUrl: string) {

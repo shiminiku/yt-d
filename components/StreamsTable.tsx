@@ -1,16 +1,14 @@
 import { useMemo, useState } from "react"
 import { URLCache } from "../app/page"
-import { Help, HELPS } from "../lib/Helps"
+import { Help, HelpButton } from "../lib/Helps"
+import { BaseFormat, MiniFormat } from "@shiminiku/yt-o"
 import style from "/styles/StreamsTable.module.scss"
+import { AdFormat, Format } from "../lib/yt-dp"
+import { FormatFilters, formatsFilter } from "./FormatFilters"
 
-interface Format {
-  url?: string
-  signatureCipher?: string
-}
+type CacheUpdater = React.Dispatch<React.SetStateAction<URLCache>>
 
-type CacheUpdater = (f: (pv: URLCache) => URLCache) => void
-
-function genFmtURL(f: Format, updateCache: CacheUpdater) {
+function genFmtURL(f: MiniFormat, updateCache: CacheUpdater) {
   const yt_dp = (window as any).yt_dp
   let url = f.url
   if (f.signatureCipher) {
@@ -34,7 +32,7 @@ function genFmtURL(f: Format, updateCache: CacheUpdater) {
   updateCache((pv) => ({ ...pv, [f.url || f.signatureCipher || ""]: pUrl.toString() }))
 }
 
-function DownloadLink({ f, urlCache, updateCache }: { f: Format; urlCache: URLCache; updateCache: CacheUpdater }) {
+function DownloadLink({ f, urlCache, updateCache }: { f: MiniFormat; urlCache: URLCache; updateCache: CacheUpdater }) {
   if (f.url && urlCache[f.url]) {
     return (
       <a target="_blank" href={urlCache[f.url]} rel="noreferrer">
@@ -55,75 +53,124 @@ function DownloadLink({ f, urlCache, updateCache }: { f: Format; urlCache: URLCa
         setTimeout(tryLoop, 1000)
       }
     }
-    tryLoop()
+    setTimeout(tryLoop, 0)
     return "取得中…"
   }
 }
 
-interface Filter {
-  label: string
-  filter: string
+const CODECS = {
+  avc1: "H.264",
+  mp4a: "AAC",
+  av01: "AV1",
+  vp9: "VP9",
+  opus: "Opus",
 }
-const FILTERS: Filter[] = [
-  { label: "MP4", filter: "mp4" },
-  { label: "WebM", filter: "webm" },
-  { label: "", filter: "" },
-  { label: "H.264", filter: "avc1" },
-  { label: "VP9", filter: "vp9" },
-  { label: "AV1", filter: "av01" },
-  { label: "", filter: "" },
-  { label: "AAC", filter: "mp4a" },
-  { label: "Opus", filter: "opus" },
-]
+function convertCodecName(codec: string) {
+  if (codec in CODECS) {
+    return CODECS[codec as keyof typeof CODECS]
+  } else {
+    return codec
+  }
+}
 
-export function StreamsTable({
-  streams,
-  urlCache,
-  updateCache,
-  showHelp,
-  radioId,
-}: {
-  streams: any[]
-  urlCache: URLCache
-  updateCache: CacheUpdater
-  showHelp: (help: Help) => void
-  radioId: string
-}) {
-  const radioGroup = `stream-filter--${radioId}`
-  const [filterId, setFilter] = useState<number | null>(null)
+function getPrePeriod(str: string) {
+  const index = str.indexOf(".")
+  return index !== -1 ? str.slice(0, index) : str
+}
 
-  const filterStreams = useMemo(
-    () => streams?.filter((s) => (filterId !== null ? s.mimeType.includes(FILTERS[filterId].filter) : true)),
-    [filterId, streams]
-  )
+function FormatRow({ fmt, urlCache, updateCache }: { fmt: BaseFormat; urlCache: URLCache; updateCache: CacheUpdater }) {
+  let bitrateSuffix = "Kbps"
+  let b = (fmt.averageBitrate ?? fmt.bitrate) / 1000
+  if (b / 1000 >= 1) {
+    b = b / 1000
+    bitrateSuffix = "Mbps"
+  }
+
+  let lenSuffix = ""
+  let len = parseInt(fmt.contentLength)
+  if (len / 1000 >= 1) {
+    len /= 1000
+    lenSuffix = "KB"
+
+    if (len / 1000 >= 1) {
+      len /= 1000
+      lenSuffix = "MB"
+    }
+  }
+
+  const mimeType = fmt.mimeType.match(/(\w+\/\w+);\s?codecs="([^,"]+)(?:"|, ([^,"]+)")/)
+  const [_, type, codec0, codec1] = mimeType ?? []
+
+  const video = fmt as Format
+  const fmtAny = fmt as any
 
   return (
-    <div>
-      <div className={style.filters}>
-        {FILTERS.map((f, i) => (
-          <span key={i}>
-            {f.filter.length === 0 ? (
-              "・"
-            ) : (
-              <>
-                <input
-                  type="radio"
-                  className={style.filterInput}
-                  name={radioGroup}
-                  id={`${radioGroup}--${f.filter}`}
-                  checked={filterId === i}
-                  onClick={() => {
-                    setFilter((p) => (p === i ? null : i))
-                  }}
-                />
-                <label htmlFor={`${radioGroup}--${f.filter}`} className={style.filterLabel}>
-                  {f.label}
-                </label>
-              </>
-            )}
+    <tr>
+      {/* itag */}
+      <td>{fmt.itag}</td>
+      {/* type */}
+      <td>
+        <code title={fmt.mimeType}>
+          {mimeType ? (
+            <>
+              <span className={style[type.startsWith("video") ? "video-mimetype-text" : "audio-mimetype-text"]}>
+                {type.slice(0, 5)}
+              </span>
+              {type.slice(5)}{" "}
+              {codec0 && (
+                <span>
+                  [{convertCodecName(getPrePeriod(codec0))}
+                  {codec1 && "," + convertCodecName(getPrePeriod(codec1))}]
+                </span>
+              )}
+            </>
+          ) : (
+            "(なし)"
+          )}
+        </code>
+      </td>
+      {/* resolution fps */}
+      <td className={style.videoQuality}>
+        {video.height ? video.height + "p" : ""}
+        {video.fps ? (
+          video.fps + "fps"
+        ) : (
+          <span className={style["gray-text"]}>
+            {fmtAny.isDrc ? <abbr title="Dynamic range compression (ダイナミックレンジ圧縮)">DRC</abbr> : "(音声)"}
           </span>
-        ))}
-      </div>
+        )}
+      </td>
+      {/* bitrate */}
+      <td className={style.bytesText}>{Number.isNaN(b) ? "-" : `${b.toFixed(3)} ${bitrateSuffix}`}</td>
+      {/* content size */}
+      <td className={style.bytesText}>{Number.isNaN(len) ? "-" : `${len.toFixed(2)} ${lenSuffix}`}</td>
+      {/* link */}
+      <td>
+        <DownloadLink f={fmt} urlCache={urlCache} updateCache={updateCache} />
+      </td>
+    </tr>
+  )
+}
+
+export function StreamsTable({
+  formats,
+  adFormats,
+  urlCache,
+  updateCache,
+}: {
+  formats: Format[]
+  adFormats: AdFormat[]
+  urlCache: URLCache
+  updateCache: CacheUpdater
+}) {
+  const [filterId, setFilter] = useState<number | null>(null)
+
+  const filterFormats = useMemo(() => formats.filter(formatsFilter(filterId)), [formats, filterId])
+  const filterAdFormats = useMemo(() => adFormats.filter(formatsFilter(filterId)), [adFormats, filterId])
+
+  return (
+    <section className={style.formatsList}>
+      <FormatFilters radioId="both" selected={filterId} setSelected={setFilter} />
 
       <div className={style["overflow-scroll"]}>
         <table className={style["table-streaming"]}>
@@ -133,84 +180,19 @@ export function StreamsTable({
                 <abbr title="おそらく、内部的に使われている形式の識別子またはタグ">itag</abbr>
               </th>
               <th>
-                MIMEタイプ
-                <button className={style["help-btn"]} onClick={() => showHelp(HELPS.mimeType)}>
-                  ?
-                </button>
+                フォーマット
+                <HelpButton helpKey="mimeType">?</HelpButton>
               </th>
               <th>画質</th>
               <th>ビットレート</th>
               <th>サイズ</th>
               <th>リンク</th>
             </tr>
-            {filterStreams.length > 0 ? (
-              filterStreams?.map?.((stream: any, i: number) => {
-                let bitrateSuffix = "Kbps"
-                let b = stream.averageBitrate / 1000
-                if (b / 1000 >= 1) {
-                  b = b / 1000
-                  bitrateSuffix = "Mbps"
-                }
-                let bitrate = b.toFixed(3)
-
-                let lenSuffix = ""
-                let len = parseInt(stream.contentLength)
-                if (len / 1000 >= 1) {
-                  len /= 1000
-                  lenSuffix = "KB"
-
-                  if (len / 1000 >= 1) {
-                    len /= 1000
-                    lenSuffix = "MB"
-                  }
-                }
-                const length = len.toFixed(2)
-
-                return (
-                  <tr key={i}>
-                    <td>{stream.itag}</td>
-                    <td>
-                      <code title={stream.mimeType}>
-                        {stream.mimeType.startsWith("video") ? (
-                          <>
-                            <span className={style["video-mimetype-text"]}>{stream.mimeType.slice(0, 5)}</span>
-                            {stream.mimeType.slice(5)}
-                          </>
-                        ) : (
-                          <>
-                            <span className={style["audio-mimetype-text"]}>{stream.mimeType.slice(0, 5)}</span>
-                            {stream.mimeType.slice(5)}
-                          </>
-                        )}
-                      </code>
-                    </td>
-                    <td>
-                      {stream.height ? stream.height + "p" : ""}
-                      {stream.fps ? (
-                        stream.fps + "fps"
-                      ) : (
-                        <span className={style["gray-text"]}>
-                          {stream.isDrc ? (
-                            <abbr title="Dynamic range compression (ダイナミックレンジ圧縮)">DRC</abbr>
-                          ) : (
-                            "(音声)"
-                          )}
-                        </span>
-                      )}
-                    </td>
-                    <td className={style["bitrate-text"]}>
-                      {bitrate} {bitrateSuffix}
-                    </td>
-                    <td className={style["bitrate-text"]}>
-                      {length} {lenSuffix}
-                    </td>
-                    <td>
-                      <DownloadLink f={stream} urlCache={urlCache} updateCache={updateCache} />
-                    </td>
-                  </tr>
-                )
-              })
-            ) : (
+            {filterFormats.length > 0 &&
+              filterFormats.map((fmt, i) => (
+                <FormatRow key={i} fmt={fmt} urlCache={urlCache} updateCache={updateCache} />
+              ))}
+            {filterFormats.length === 0 && filterAdFormats.length === 0 ? (
               <tr>
                 <td></td>
                 <td>指定の条件では見つかりませんでした</td>
@@ -219,10 +201,23 @@ export function StreamsTable({
                 <td></td>
                 <td></td>
               </tr>
+            ) : (
+              <tr className={style.emptyRow}>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
             )}
+            {filterAdFormats.length > 0 &&
+              filterAdFormats.map((fmt, i) => (
+                <FormatRow key={i} fmt={fmt} urlCache={urlCache} updateCache={updateCache} />
+              ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   )
 }
