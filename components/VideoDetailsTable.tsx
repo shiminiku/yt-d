@@ -42,7 +42,7 @@ export function VideoDetails({ videoDetails }: { videoDetails: any }) {
               </tr>
               <tr>
                 <th>動画時間</th>
-                <td>{toDurationString(videoDetails.lengthSeconds)}</td>
+                <td>{toDurationString(parseInt(videoDetails.lengthSeconds))}</td>
               </tr>
             </tbody>
           </table>
