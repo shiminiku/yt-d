@@ -124,7 +124,8 @@ export default function Home() {
 
       <footer className={style.footer + " full"}>
         <p>
-          GitHub <a href="https://github.com/shiminiku/yt-d">shiminiku/yt-d</a>
+          GitHub <a href="https://github.com/shiminiku/yt-d">shiminiku/yt-d</a>・Loading Icon{" "}
+          <a href="https://github.com/SamHerbert/SVG-Loaders">SVG-Loaders</a>
         </p>
       </footer>
 
