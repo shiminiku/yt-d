@@ -1,4 +1,6 @@
+"use client"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
 const IMAGES = [
   "audio.svg",
@@ -16,12 +18,9 @@ const IMAGES = [
 ]
 
 export default function RandLoading() {
-  return (
-    <Image
-      src={"/svg-loaders/" + IMAGES[Math.floor(Math.random() * IMAGES.length)]}
-      alt="ロード中…"
-      width={16}
-      height={16}
-    />
-  )
+  const [img, setImg] = useState("")
+  useEffect(() => {
+    setImg("/svg-loaders/" + IMAGES[Math.floor(Math.random() * IMAGES.length)])
+  }, [])
+  return img ? <Image src={img} alt="ロード中…" width={16} height={16} /> : null
 }
