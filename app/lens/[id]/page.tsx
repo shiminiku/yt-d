@@ -3,6 +3,7 @@ import style from "./page.module.scss"
 import { Expandable } from "../../../components/Expandable"
 import { Metadata } from "next"
 import { BooleanItem } from "../../../components/BooleanItem"
+import { GET_playerResponse } from "../../../lib/yt-dp"
 
 interface SimpleText {
   simpleText: string
@@ -92,7 +93,7 @@ function Inner({ pr }: { pr: PlayerResponse }) {
 
 export default async function LensId({ params }: Props) {
   const { id } = await params
-  const { playerResponse: pr } = await getPlayerResponse(id)
+  const { playerResponse: pr } = await GET_playerResponse(id)
   if (!pr) return
 
   return (
