@@ -1,7 +1,6 @@
 "use client"
-
 import { useState } from "react"
-import style from "./page.module.scss"
+import style from "../styles/Expandable.module.scss"
 
 export function Expandable({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false)
