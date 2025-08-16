@@ -5,6 +5,7 @@ import Image from "next/image"
 import style from "./page.module.scss"
 import yt from "/public/trouble-yt.svg"
 import RandLoading from "../components/RandLoad"
+import Link from "next/link"
 
 export type URLCache = Record<string, string>
 
@@ -32,6 +33,10 @@ export default function Home() {
           Thanks for using this tool! <RandLoading />
           <RandLoading />
           <RandLoading />
+        </p>
+
+        <p>
+          <Link href="/lens">オマケ</Link>
         </p>
       </main>
 

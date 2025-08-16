@@ -1,0 +1,15 @@
+.true {
+  color: brown;
+}
+.false {
+  color: darkturquoise;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .true {
+    color: coral;
+  }
+  .false {
+    color: cyan;
+  }
+}

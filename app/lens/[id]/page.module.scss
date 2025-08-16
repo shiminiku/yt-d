@@ -1,0 +1,47 @@
+.thumbnailsList {
+  list-style-type: none;
+  padding: 0;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  > li img {
+    max-width: 100%;
+  }
+}
+
+.sep > *:not(:last-child)::after {
+  content: "・";
+}
+
+.description {
+  font-family: inherit;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.expanded,
+.expandable {
+  border: 1px solid;
+  padding: 0.5em;
+  border-radius: 0.5em;
+}
+
+.expandable {
+  cursor: pointer;
+
+  &:hover {
+    background-color: lightgray;
+  }
+
+  > .content {
+    height: 3em;
+    overflow: hidden;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .expandable:hover {
+    background-color: dimgray;
+  }
+}
