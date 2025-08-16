@@ -14,7 +14,7 @@ export async function GET_watch(videoId: string) {
 }
 
 export async function GET_playerResponse(videoId: string) {
-  return (await fetch(`${BASE_URL}/watch?v=${videoId}`).then((r) =>
+  return (await fetch(`${BASE_URL}/playerResponse?v=${videoId}`).then((r) =>
     r.status === 200 ? r.json() : Promise.reject(new Error("returned not 200."))
   )) as GET_playerResponse_resp
 }
