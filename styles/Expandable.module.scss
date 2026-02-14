@@ -1,0 +1,25 @@
+.expanded,
+.expandable {
+  border: 1px solid;
+  padding: 0.5em;
+  border-radius: 0.5em;
+}
+
+.expandable {
+  cursor: pointer;
+
+  &:hover {
+    background-color: lightgray;
+  }
+
+  > .content {
+    height: 3em;
+    overflow: hidden;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .expandable:hover {
+    background-color: dimgray;
+  }
+}

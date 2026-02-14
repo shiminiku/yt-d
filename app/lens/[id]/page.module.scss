@@ -1,0 +1,21 @@
+.thumbnailsList {
+  list-style-type: none;
+  padding: 0;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  > li img {
+    max-width: 100%;
+  }
+}
+
+.sep > *:not(:last-child)::after {
+  content: "・";
+}
+
+.description {
+  font-family: inherit;
+  text-overflow: ellipsis;
+  margin: 0;
+}
