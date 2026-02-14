@@ -1,5 +1,8 @@
 # yt-d (yt-downloader)
 
+> [!IMPORTANT]
+> "yt-d" has been shutdown. Goodbye!
+
 A Web YT Downloader
 
 Running at https://yt-d.vercel.app/ on Vercel
