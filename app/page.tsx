@@ -3,7 +3,6 @@
 import Image from "next/image"
 
 import style from "./page.module.scss"
-import yt from "/public/trouble-yt.svg"
 import RandLoading from "../components/RandLoad"
 import Link from "next/link"
 
@@ -16,7 +15,7 @@ export default function Home() {
         <h1>YT Downloader は終了しました</h1>
 
         <center>
-          <Image src={yt} title="かつて読込中に表示されていた画像" alt="かつて読込中に表示されていた画像" />
+          <Image src="/public/trouble-yt.svg" title="かつて読込中に表示されていた画像" alt="かつて読込中に表示されていた画像" />
         </center>
 
         <p>長らくYouTube動画をダウンロードするツールを作ってきましたが、</p>
