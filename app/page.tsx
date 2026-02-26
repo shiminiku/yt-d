@@ -15,7 +15,13 @@ export default function Home() {
         <h1>YT Downloader は終了しました</h1>
 
         <center>
-          <Image src="/public/trouble-yt.svg" title="かつて読込中に表示されていた画像" alt="かつて読込中に表示されていた画像" />
+          <Image
+            src="/trouble-yt.svg"
+            title="かつて読込中に表示されていた画像"
+            alt="かつて読込中に表示されていた画像"
+            width={300}
+            height={300}
+          />
         </center>
 
         <p>長らくYouTube動画をダウンロードするツールを作ってきましたが、</p>
