@@ -33,7 +33,7 @@ export function LensForm() {
       {error && <p>{error}</p>}
       {pending && (
         <p>
-          <RandLoading /> Loading... <RandLoading />
+          <RandLoading /> ロード中... <RandLoading />
         </p>
       )}
     </>
