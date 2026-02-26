@@ -1,4 +1,4 @@
-import { getPlayerResponse, PlayerResponse } from "@shiminiku/yt-o"
+import { PlayerResponse } from "@shiminiku/yt-o"
 import style from "./page.module.scss"
 import { Expandable } from "../../../components/Expandable"
 import { Metadata } from "next"
@@ -107,7 +107,7 @@ export default async function LensId({ params }: Props) {
 
         <details>
           <summary>Developer Mode 🔨⛑️</summary>
-          <pre>
+          <pre className={style.json}>
             <code>{JSON.stringify(pr, null, 2)}</code>
           </pre>
         </details>
