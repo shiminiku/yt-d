@@ -1,13 +1,8 @@
-import { PlayerResponse } from "@shiminiku/yt-o"
 import style from "./page.module.scss"
-import { Expandable } from "../../../components/Expandable"
 import { Metadata } from "next"
-import { BooleanItem } from "../../../components/BooleanItem"
-import { GET_playerResponse } from "../../../lib/yt-dp"
-
-interface SimpleText {
-  simpleText: string
-}
+import { JSDOM } from "jsdom"
+import { Suspense } from "react"
+import RandLoading from "../../../components/RandLoad"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -17,101 +12,132 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-function Inner({ pr }: { pr: PlayerResponse }) {
-  const status = pr.playabilityStatus
-  const details = pr.videoDetails
-
-  const microformat = pr.microformat?.playerMicroformatRenderer
-
+function ThumbnailList({ id, name }: { id: string; name?: string }) {
   return (
-    <>
-      <p>
-        ステータス: {status.status}
-        {status.reason && ` (${status.reason})`}, 埋め込み: {status.playableInEmbed ? "可能" : "不可"}
-      </p>
-
-      {details && (
-        <div>
-          <img src={details.thumbnail.thumbnails[0].url} />
-          <details>
-            <summary>サムネイル一覧</summary>
-            <ul className={style.thumbnailsList}>
-              {details.thumbnail.thumbnails.map((t, i) => (
-                <li key={i}>
-                  <a href={t.url} target="_blank" rel="noopener noreferrer">
-                    <img src={t.url} loading="lazy" /*  width={t.width} height={t.height} */ />
-                    <p>
-                      {t.width} x {t.height}
-                    </p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </div>
-      )}
-
-      {microformat && (
-        <div>
-          <p>
-            <a href={(microformat as any).canonicalUrl} target="_blank" rel="noopener noreferrer">
-              {(microformat as any).canonicalUrl}
+    <details>
+      <summary>{name ?? "サムネイル一覧"}</summary>
+      <ul className={style.thumbnailsList}>
+        {[
+          { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, width: 480, height: 360 },
+          { url: `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`, width: 1280, height: 720 },
+        ].map((t, i) => (
+          <li key={i}>
+            <a href={t.url} target="_blank" rel="noopener noreferrer">
+              <img src={t.url} loading="lazy" /*  width={t.width} height={t.height} */ />
+              <p>
+                {t.width} x {t.height}
+              </p>
             </a>
-          </p>
-          <h2>{(microformat.title as unknown as SimpleText).simpleText}</h2>
-
-          <p className={style.sep}>
-            <span>
-              <a href={microformat.ownerProfileUrl} target="_blank" rel="noopener noreferrer">
-                {microformat.ownerChannelName}
-              </a>
-            </span>
-            <span>{parseInt(microformat.viewCount).toLocaleString()} 回再生</span>
-            <span>高評価 {parseInt((microformat as any).likeCount).toLocaleString()}</span>
-            <span>{new Date(microformat.publishDate).toLocaleString()} 公開</span>
-          </p>
-
-          <Expandable>
-            <pre className={style.description}>{(microformat.description as unknown as SimpleText).simpleText}</pre>
-          </Expandable>
-        </div>
-      )}
-
-      {details && microformat && (
-        <div>
-          <p>アップロード日: {new Date(microformat.uploadDate).toLocaleString()}</p>
-          <p className={style.sep}>
-            <BooleanItem title="ライブ配信" value={details.isLiveContent} />
-            <BooleanItem title="非公開動画" value={details.isPrivate} />
-            <BooleanItem title="クロール可能" value={details.isCrawlable} />
-          </p>
-        </div>
-      )}
-    </>
+          </li>
+        ))}
+      </ul>
+    </details>
   )
+}
+
+async function fetchMeta(id: string) {
+  const resp = await fetch(`https://www.youtube.com/watch?v=${id}`)
+
+  const dom = new JSDOM(await resp.text())
+  const doc = dom.window.document
+
+  const metas = doc.getElementsByTagName("meta")
+  const title = metas.namedItem("title")?.content
+  const description = metas.namedItem("description")?.content
+  const keyword = metas.namedItem("keywords")?.content
+
+  if (!title || !description || !keyword) {
+    throw new Error("Meta not found")
+  }
+
+  return {
+    title,
+    description,
+    keyword,
+  }
+}
+
+async function fetchOembed(id: string): Promise<{
+  title: string
+  author_name: string
+  author_url: string
+  type: "video"
+  height: number
+  width: number
+  version: "1.0"
+  provider_name: "YouTube"
+  provider_url: "https://www.youtube.com/"
+  thumbnail_height: number
+  thumbnail_width: number
+  thumbnail_url: string
+  html: string
+}> {
+  const resp = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`)
+  return await resp.json()
 }
 
 export default async function LensId({ params }: Props) {
   const { id } = await params
-  const { playerResponse: pr } = await GET_playerResponse(id)
-  if (!pr) return
-
-  return (
-    <>
+  let meta
+  let oembed
+  try {
+    meta = await fetchMeta(id)
+    oembed = await fetchOembed(id)
+  } catch (e) {
+    console.error("ErrorLensId", e)
+    return (
       <main>
         <h1>
           Lens: <code>{id}</code>
         </h1>
+        <p>エラーです。ごめんなさい… ⚠️{(e as Error)?.message ?? "Unknown Error"}</p>
+        <ThumbnailList id={id} name="もしかして… サムネイル一覧" />
+      </main>
+    )
+  }
 
-        {pr ? <Inner pr={pr} /> : <p>Error</p>}
+  return (
+    <main>
+      <h1>
+        Lens: <code>{id}</code>
+      </h1>
+
+      <Suspense
+        fallback={
+          <p>
+            ロード中… <RandLoading />
+          </p>
+        }
+      >
+        <h2>
+          <a href={`https://www.youtube.com/watch?v=${id}`} target="_blank" rel="noopener noreferrer">
+            {meta.title}
+          </a>
+        </h2>
+        <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} />
+        <p>
+          <a href={oembed.author_url} target="_blank" rel="noopener noreferrer">
+            {oembed.author_name}
+          </a>
+        </p>
+
+        <h2>概要</h2>
+        <p>{meta.description}</p>
+
+        <h2>キーワード</h2>
+        <p>{meta.keyword}</p>
+
+        <div>
+          <ThumbnailList id={id} />
+        </div>
 
         <details>
           <summary>Developer Mode 🔨⛑️</summary>
           <pre className={style.json}>
-            <code>{JSON.stringify(pr, null, 2)}</code>
+            <code>{JSON.stringify({ meta, oembed }, null, 2)}</code>
           </pre>
         </details>
-      </main>
-    </>
+      </Suspense>
+    </main>
   )
 }
