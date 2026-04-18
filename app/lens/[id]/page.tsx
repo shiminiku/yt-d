@@ -1,6 +1,5 @@
 import style from "./page.module.scss"
 import { Metadata } from "next"
-import { JSDOM } from "jsdom"
 import { Suspense } from "react"
 import RandLoading from "../../../components/RandLoad"
 
@@ -38,6 +37,7 @@ function ThumbnailList({ id, name }: { id: string; name?: string }) {
 async function fetchMeta(id: string) {
   const resp = await fetch(`https://www.youtube.com/watch?v=${id}`)
 
+  const { JSDOM } = await import("jsdom")
   const dom = new JSDOM(await resp.text())
   const doc = dom.window.document
 
